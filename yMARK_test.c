@@ -13,7 +13,7 @@ static void  o___UNIT_TEST_______o () { return; }
 char           unit_answer [LEN_FULL];
 
 char       /*----: set up program urgents/debugging --------------------------*/
-ymark__unit_quiet        (void)
+ymark__unit_quiet       (void)
 {
    int         x_narg       = 1;
    char       *x_args [20]  = {"yMARK_unit" };
@@ -29,7 +29,7 @@ ymark__unit_quiet        (void)
 }
 
 char       /*----: set up program urgents/debugging --------------------------*/
-ymark__unit_loud         (void)
+ymark__unit_loud        (void)
 {
    int         x_narg       = 1;
    char       *x_args [20]  = {"yMARK_unit" };
@@ -43,6 +43,8 @@ ymark__unit_loud         (void)
    yURG_name  ("ysrc"         , YURG_ON);
    yURG_name  ("ymap"         , YURG_ON);
    yURG_name  ("ykeys"        , YURG_ON);
+   yURG_name  ("srch"         , YURG_ON);
+   yURG_name  ("ysort"        , YURG_ON);
    DEBUG_YCMD  yLOG_info     ("yMARK"     , yMARK_version   ());
    yMODE_init (MODE_MAP);
    yMODE_handler_setup ();
@@ -56,12 +58,48 @@ ymark__unit_loud         (void)
 }
 
 char       /*----: stop logging ----------------------------------------------*/
-ymark__unit_end          (void)
+ymark__unit_end         (void)
 {
    DEBUG_YCMD  yLOG_enter   (__FUNCTION__);
    yCMD_wrap    ();
    DEBUG_YCMD  yLOG_exit    (__FUNCTION__);
    yLOGS_end    ();
+   return 0;
+}
+
+char ymark__unit_stub        (void) { return 0; }
+
+char
+ymark__unit_regex       (char *a_search)
+{
+   DEBUG_SRCH  yLOG_enter   (__FUNCTION__);
+   if (a_search == NULL)  return 0;
+   if      (strcmp ("/1st", a_search) == 0) {
+      DEBUG_SRCH   yLOG_note    ("found /1st");
+      yMARK_found ("0k11"     ,   0,  10,  10,   0);
+      yMARK_found ("0p12"     ,   0,  15,  11,   0);
+      yMARK_found ("3d6"      ,   3,   3,   5,   0);
+   }
+   else if (strcmp ("/2nd", a_search) == 0) {
+      DEBUG_SRCH   yLOG_note    ("found /2nd");
+      yMARK_found ("0k11"     ,   0,  10,  10,   0);
+      yMARK_found ("0b3"      ,   0,   1,   2,   0);
+      yMARK_found ("2b5"      ,   2,   1,   4,   0);
+      yMARK_found ("Za1"      ,  35,   0,   0,   0);
+   }
+   else if (strcmp ("/another", a_search) == 0) {
+      DEBUG_SRCH   yLOG_note    ("found /another");
+      yMARK_found ("2b5"      ,   2,   1,   4,   0);
+   } else {
+      DEBUG_SRCH   yLOG_note    ("nothing found");
+   }
+   DEBUG_SRCH  yLOG_exit    (__FUNCTION__);
+   return 0;
+}
+
+char
+ymark__unit_unregex     (char *a_junk)
+{
    return 0;
 }
 
@@ -76,14 +114,12 @@ yMARK__unit             (char *a_question, int n)
    char        t           [LEN_FULL]  = "";
    int         i           =    0;
    /*---(preprare)-----------------------*/
-   strcpy  (unit_answer, "CMD unit         : question not understood");
+   strcpy  (unit_answer, "MARK unit        : question not understood");
    /*---(selection)----------------------*/
-   /*> if      (strcmp (a_question, "p_all"          )   == 0) {                                                                                                                                                              <* 
-    *>    sprintf (s, "%2då%-.10sæ", strlen (myCMD.p_fields [0]), myCMD.p_fields [0]);                                                                                                                                        <* 
-    *>    sprintf (t, "%2då%-.50sæ", strlen (myCMD.p_all), myCMD.p_all);                                                                                                                                                      <* 
-    *>    snprintf (unit_answer, LEN_FULL, "CMD p_all        : %-14.14s  %s", s, t);                                                                                                                                          <* 
-    *> }                                                                                                                                                                                                                      <* 
-    *> else if (strcmp (a_question, "p_field"        )   == 0) {                                                                                                                                                              <* 
+   if      (strcmp (a_question, "point"          )   == 0) {
+      snprintf (unit_answer, LEN_FULL, "MARK point       : regx %-10p  unre %-10p  hint %-10p  unhi %p", myMARK.e_regex, myMARK.e_unregex, myMARK.e_hint, myMARK.e_unhint);
+   }
+   /*> else if (strcmp (a_question, "p_field"        )   == 0) {                                                                                                                                                              <* 
     *>    snprintf (unit_answer, LEN_FULL, "CMD p_field (%2d) :", myCMD.p_nfield);                                                                                                                                            <* 
     *>    for (i = 1; i < 7; ++i)  {                                                                                                                                                                                          <* 
     *>       sprintf (s, " %2då%-.8sæ", strlen (myCMD.p_fields [i]), myCMD.p_fields [i]);                                                                                                                                     <* 
