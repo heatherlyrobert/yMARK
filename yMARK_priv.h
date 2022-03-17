@@ -36,8 +36,8 @@
 
 #define     P_VERMAJOR  "2.--, clean, improve, and expand"
 #define     P_VERMINOR  "2.0-, separated into independent library"
-#define     P_VERNUM    "2.0b"
-#define     P_VERTXT    "added and unit tested basic find handling logic"
+#define     P_VERNUM    "2.0c"
+#define     P_VERTXT    "basic search interface up and unit tested"
 
 #define     P_PRIORITY  "direct, simple, brief, vigorous, and lucid (h.w. fowler)"
 #define     P_PRINCIPAL "[grow a set] and build your wings on the way down (r. bradbury)"
@@ -70,7 +70,8 @@ typedef   struct   cSRCH   tSRCH;
 struct cSRCH {
    /*---(master)------------*/
    uchar       runtime     [LEN_TERSE];
-   char        text;
+   uchar       seq         [LEN_TERSE];
+   char       *text;
    uchar       runs;
    ushort      found;
    /*---(btree)-------------*/
@@ -101,9 +102,9 @@ struct cFIND {
 typedef    struct    cMY    tMY;
 struct cMY {
    char      (*e_regex)      (char *a_search);
-   char      (*e_unregex)    (int u, short x, short y, short z);
+   char      (*e_unfind)     (ushort u, ushort x, ushort y, ushort z);
    char      (*e_hint)       (char *a_search);
-   char      (*e_unhint)     (int u, short x, short y, short z);
+   char      (*e_unhint)     (ushort u, ushort x, ushort y, ushort z);
 };
 extern tMY         myMARK;
 
@@ -119,7 +120,7 @@ char        ymark__unit_loud        (void);
 char        ymark__unit_end         (void);
 char        ymark__unit_stub        (void);
 char        ymark__unit_regex       (char *a_search);
-char        ymark__unit_unregex     (char *a_junk);
+char        ymark__unit_unfind      (ushort u, ushort x, ushort y, ushort z);
 char*       yMARK__unit             (char *a_question, int n);
 
 /*===[[ yMARK_srch.c ]]=======================================================*/
@@ -133,15 +134,25 @@ char        ymark_srch_new          (uchar *a_label, char a_force, tSRCH **r_new
 char        ymark_srch_free         (tSRCH **r_old);
 /*---(search)---------------*/
 int         ymark_srch_count        (void);
-char        ymark_srch_by_name      (uchar *a_name, tSRCH **r_find);
-char        ymark_srch_by_index     (int n, tSRCH **r_find);
-char        ymark_srch_by_cursor    (uchar a_dir, tSRCH **r_find);
-char        ymark_srch_by_text      (uchar *a_text, tSRCH **r_find);
+char        ymark_srch_by_name      (uchar *a_name, tSRCH **r_srch);
+char        ymark_srch_by_index     (int n, tSRCH **r_srch);
+char        ymark_srch_by_cursor    (uchar a_dir, tSRCH **r_srch);
+char        ymark_srch_by_text      (uchar *a_text, tSRCH **r_srch);
+char*       ymark_srch_list         (void);
+char*       ymark_srch__entry       (int n, uchar a_abbr, tSRCH *a_srch);
+char*       ymark_srch_entry        (int n);
+char*       ymark_srch_marked       (uchar a_abbr);
+char*       ymark_srch_marks        (void);
 /*---(execute)--------------*/
-char        ymark_srch_direct       (uchar *a_text);
+char        yMARK_execute           (uchar *a_search);
 /*---(moves)----------------*/
 char        ymark_srch_index        (uchar a_abbr);
-char        ymark_srch_clear        (uchar a_abbr);
+char        ymark_srch_mark         (uchar a_abbr);
+char        ymark_srch_unmark       (uchar a_abbr);
+char        ymark_srch_export       (uchar a_abbr);
+char        ymark_srch_import       (uchar a_abbr);
+char        ymark_srch_copy         (uchar a_src, uchar a_dst);
+char        ymark_srch_direct       (uchar *a_string);
 /*---(done)-----------------*/
 
 

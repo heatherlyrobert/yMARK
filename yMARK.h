@@ -15,7 +15,7 @@ char*       yMARK_version           (void);
 char        yMARK_init              (void);
 char        yMARK_wrap              (void);
 /*---(interface)------------*/
-char        yMARK_config            (void *a_searcher, void *a_unsearcher, void *a_hinter, void *a_unhinter);
+char        yMARK_config            (void *a_regex, void *a_unfind, void *a_hint, void *a_unhint);
 char        yMARK_search            (uchar *a_search);
 char        yMARK_found             (uchar *a_label, ushort u, ushort x, ushort y, ushort z);
 char        yMARK_lost              (uchar *a_label);

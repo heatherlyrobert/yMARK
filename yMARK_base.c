@@ -79,11 +79,13 @@ yMARK_init               (void)
 char
 yMARK_wrap               (void)
 {
+   ymark_find_wrap ();
+   ymark_srch_wrap ();
    return  0;
 }
 
 char
-yMARK_config            (void *a_regex, void *a_unregex, void *a_hint, void *a_unhint)
+yMARK_config            (void *a_regex, void *a_unfind, void *a_hint, void *a_unhint)
 {
    /*---(locals)-----------+-----+-----+-*/
    char        rce         =  -10;
@@ -101,7 +103,7 @@ yMARK_config            (void *a_regex, void *a_unregex, void *a_hint, void *a_u
       if (!yMODE_operational (MODE_SEARCH)) {
          DEBUG_SRCH   yLOG_note    ("without regex searcher callback, search can not function");
          myMARK.e_regex    = NULL;
-         myMARK.e_unregex  = NULL;
+         myMARK.e_unfind   = NULL;
          DEBUG_SRCH   yLOG_exitr   (__FUNCTION__, rce);
          return rce;
       }
@@ -109,20 +111,20 @@ yMARK_config            (void *a_regex, void *a_unregex, void *a_hint, void *a_u
       myMARK.e_regex   = a_regex;
    }
    /*---(update unregex)-----------------*/
-   DEBUG_SRCH   yLOG_point   ("a_unregex" , a_unregex);
-   --rce;  if (a_unregex == NULL) {
+   DEBUG_SRCH   yLOG_point   ("a_unfind"  , a_unfind);
+   --rce;  if (a_unfind == NULL) {
       if (!yMODE_operational (MODE_SEARCH)) {
          DEBUG_SRCH   yLOG_note    ("without regex clearer callback, search can not function");
          myMARK.e_regex    = NULL;
-         myMARK.e_unregex  = NULL;
+         myMARK.e_unfind   = NULL;
          DEBUG_SRCH   yLOG_exitr   (__FUNCTION__, rce);
          return rce;
       }
    } else {
-      myMARK.e_unregex = a_unregex;
+      myMARK.e_unfind  = a_unfind;
    }
    /*---(update status)------------------*/
-   if (a_regex != NULL && a_unregex != NULL) {
+   if (a_regex != NULL && a_unfind != NULL) {
       yMODE_conf_set   (MODE_SEARCH, '1');
    }
    /*---(update hint)--------------------*/

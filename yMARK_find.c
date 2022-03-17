@@ -91,6 +91,7 @@ ymark_find_free         (tFIND **r_old)
    /*---(locals)-----------+-----+-----+-*/
    char        rce         =  -10;
    char        rc          =    0;
+   char        x_rc        =    0;
    /*---(header)-------------------------*/
    DEBUG_SRCH   yLOG_enter   (__FUNCTION__);
    /*---(check return)-------------------*/
@@ -102,6 +103,19 @@ ymark_find_free         (tFIND **r_old)
    DEBUG_SRCH   yLOG_point   ("*r_old"    , *r_old);
    --rce;  if (*r_old == NULL) {
       DEBUG_SRCH   yLOG_note    ("pointer was never set");
+      DEBUG_SRCH   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
+   /*---(handle unfind)-----------------*/
+   DEBUG_SRCH   yLOG_point   ("e_unfind"  , myMARK.e_unfind);
+   DEBUG_SRCH   yLOG_point   ("unit"      , ymark__unit_unfind);
+   --rce;  if (myMARK.e_unfind == NULL) {
+      DEBUG_SRCH   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
+   x_rc = myMARK.e_unfind ((*r_old)->u, (*r_old)->x, (*r_old)->y, (*r_old)->z);
+   DEBUG_SRCH   yLOG_value   ("x_rc"      , x_rc);
+   --rce;  if (x_rc < 0) {
       DEBUG_SRCH   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
@@ -123,7 +137,7 @@ ymark_find_free         (tFIND **r_old)
    *r_old = NULL;
    /*---(complete)-----------------------*/
    DEBUG_SRCH   yLOG_exit    (__FUNCTION__);
-   return 0;
+   return x_rc;
 }
 
 

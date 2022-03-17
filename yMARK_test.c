@@ -98,8 +98,10 @@ ymark__unit_regex       (char *a_search)
 }
 
 char
-ymark__unit_unregex     (char *a_junk)
+ymark__unit_unfind      (ushort u, ushort x, ushort y, ushort z)
 {
+   DEBUG_SRCH  yLOG_enter   (__FUNCTION__);
+   DEBUG_SRCH  yLOG_exit    (__FUNCTION__);
    return 0;
 }
 
@@ -117,7 +119,7 @@ yMARK__unit             (char *a_question, int n)
    strcpy  (unit_answer, "MARK unit        : question not understood");
    /*---(selection)----------------------*/
    if      (strcmp (a_question, "point"          )   == 0) {
-      snprintf (unit_answer, LEN_FULL, "MARK point       : regx %-10p  unre %-10p  hint %-10p  unhi %p", myMARK.e_regex, myMARK.e_unregex, myMARK.e_hint, myMARK.e_unhint);
+      snprintf (unit_answer, LEN_FULL, "MARK point       : regx %-10p  unre %-10p  hint %-10p  unhi %p", myMARK.e_regex, myMARK.e_unfind, myMARK.e_hint, myMARK.e_unhint);
    }
    /*> else if (strcmp (a_question, "p_field"        )   == 0) {                                                                                                                                                              <* 
     *>    snprintf (unit_answer, LEN_FULL, "CMD p_field (%2d) :", myCMD.p_nfield);                                                                                                                                            <* 
