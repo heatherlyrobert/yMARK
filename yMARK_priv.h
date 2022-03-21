@@ -37,7 +37,7 @@
 #define     P_VERMAJOR  "2.--, clean, improve, and expand"
 #define     P_VERMINOR  "2.0-, separated into independent library"
 #define     P_VERNUM    "2.0c"
-#define     P_VERTXT    "basic search interface up and unit tested"
+#define     P_VERTXT    "search/regex interface integrated into gyges and metis"
 
 #define     P_PRIORITY  "direct, simple, brief, vigorous, and lucid (h.w. fowler)"
 #define     P_PRINCIPAL "[grow a set] and build your wings on the way down (r. bradbury)"
@@ -63,6 +63,11 @@
 #include    <yFILE.h>             /* heatherly vi-keys content file handling  */
 #include    <yDLST_solo.h>
 #include    <ySORT.h>             /* heatherly sorting and searching          */
+
+
+
+#define      SEARCH_REPO         "/var/lib/vikeys/search.repo"
+#define      SEARCH_LOCAL        "/.vikeys/search.repo"
 
 
 
@@ -101,10 +106,9 @@ struct cFIND {
 
 typedef    struct    cMY    tMY;
 struct cMY {
-   char      (*e_regex)      (char *a_search);
-   char      (*e_unfind)     (ushort u, ushort x, ushort y, ushort z);
-   char      (*e_hint)       (char *a_search);
-   char      (*e_unhint)     (ushort u, ushort x, ushort y, ushort z);
+   char      (*e_regex)      (uchar a_not, uchar *a_search);
+   char      (*e_unfind)     (uchar *a_label, ushort u, ushort x, ushort y, ushort z);
+   char      (*e_hint)       (uchar *a_hint);
 };
 extern tMY         myMARK;
 
@@ -152,7 +156,8 @@ char        ymark_srch_unmark       (uchar a_abbr);
 char        ymark_srch_export       (uchar a_abbr);
 char        ymark_srch_import       (uchar a_abbr);
 char        ymark_srch_copy         (uchar a_src, uchar a_dst);
-char        ymark_srch_direct       (uchar *a_string);
+char        ymark_srch_full         (uchar a_abbr, uchar *a_text);;
+char        yMARK_srch_direct       (uchar *a_string);
 /*---(done)-----------------*/
 
 

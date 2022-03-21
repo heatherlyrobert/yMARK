@@ -1,0 +1,100 @@
+.TH yMARK 3· 2013-jan "linux" "interfacing applications with library"
+
+.SH NAME
+.B yMARK
+- flexible, powerful content searching and navigation
+
+.SH PATRON
+.B ponos-diamon (hard labor and toil)
+vikeys searching and marking
+
+.SH IMAGERY
+tbd
+
+.SH SUMMARY
+yMARK is a custom c library providing universal vi/vim-ish regex searching,
+content marking, and rapid navigation hinting -- including history and search
+result combining.
+
+.SH SERIOUS DISCLAIMER
+i'm a crazy, naive, dog-fooding c programmer.  i'm NOT trying to be best.
+i optimize for learning, transparency, and ease of maintenance.  if i wanted
+awesome, fast, and cutting-edge, i'd use yours ;)
+
+.SH DOCUMENTATION FILES (see also)
+.nf  
+.B yMARK (3)··········interfacing applications with library
+yMARK (6)          interactive usage and navigation
+yMARK (7)          decision rationale, scope, and objectives
+yMARK (9)          user interface behavior guarantees
+
+.SH TABLE OF CONTENTS
+.nf  
+a) linking         compiling and linking with library
+b) synopsis        function inventory
+c) config          overall configuration
+d) regex           regex searching
+e) marking         content marking
+f) hinting         navigation hinting
+
+.SH A) LINKING
+
+include the library header in either the public or private header...
+
+.B #include  <yMARK.h>
+
+also, update the Makefile to link with the library...
+
+.B link with -L/usr/local/libs -lyMARK or -lyMARK_debug
+
+.SH B) SYNOPSIS
+nearly all of
+.B yMARK's
+capabilities are automatically prepared and handled by
+.B yVICURSES or yVIOPENGL
+, including initialization and wrap-up.  only two functions are normally
+required.
+.sp
+.nf
+.BI "char yMARK_config (char " "a_regex" ", char " "a_unfind" ", char " "a_hint" ");"
+.BI "char yMARK_found  (char *" "a_label" ", ushort " "u" ", ushort " "x" ", ushort " "y" ", ushort " "z" ");"
+
+.SH C) CONFIGURATION
+the library uses a shared configuration call for both regex searching and
+navigation hinting, marking requires no hinting.
+
+.SS yMARK_config  (a_regex, a_unfind, a_hint);
+this configuration takes three function pointers from the source application --
+two for searching and one for hinting.
+
+.B 1. char a_regex  (uchar a_search);
+
+MODERATE.  function pointer to compile the regex, walk through all applicable
+data object, test each, highlight found, and call back to the library for
+each positive find (yMARK_found).
+
+.B 2. char a_unfind (ushort u, ushort x, ushort y, ushort z);
+
+SIMPLE. function pointer to locate the content based on coordinates and toggle
+off the find flag which typically allows highlighting.
+
+.B 3. char a_hint   (uchar *a_hint)
+
+SIMPLE. function pointer to idenfity the object associated with the hint and
+jump to its location.
+
+.SH C) REGEX SEARCHING
+since the
+.B yREGEX
+library handles all the true complexity, this feature is relatively simple
+to implement and allows map-mode navigation using the [<>] standard keys.
+
+.SS yMARK_found (uchar *a_label, ushort u, ushort x, ushort y, ushort z);
+within the application's
+.B a_regex
+function, whenever a match is found, it must call this function to register
+the find.
+
+
+
+

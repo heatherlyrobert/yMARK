@@ -119,7 +119,7 @@ yMARK__unit             (char *a_question, int n)
    strcpy  (unit_answer, "MARK unit        : question not understood");
    /*---(selection)----------------------*/
    if      (strcmp (a_question, "point"          )   == 0) {
-      snprintf (unit_answer, LEN_FULL, "MARK point       : regx %-10p  unre %-10p  hint %-10p  unhi %p", myMARK.e_regex, myMARK.e_unfind, myMARK.e_hint, myMARK.e_unhint);
+      snprintf (unit_answer, LEN_FULL, "MARK point       : regx %-10p  unre %-10p  hint %p", myMARK.e_regex, myMARK.e_unfind, myMARK.e_hint);
    }
    /*> else if (strcmp (a_question, "p_field"        )   == 0) {                                                                                                                                                              <* 
     *>    snprintf (unit_answer, LEN_FULL, "CMD p_field (%2d) :", myCMD.p_nfield);                                                                                                                                            <* 

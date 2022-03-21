@@ -63,7 +63,6 @@ yMARK_init               (void)
    rc = ymark_find_init ();
    DEBUG_YCMD   yLOG_value   ("find"      , rc);
    myMARK.e_hint     = NULL;
-   myMARK.e_unhint   = NULL;
    /*---(other updates)------------------*/
    /*> rc = yFILE_dump_add ("cmds"      , "", "inventory of commands"       , ycmd_dump          );   <*/
    /*---(update status)------------------*/
@@ -85,7 +84,7 @@ yMARK_wrap               (void)
 }
 
 char
-yMARK_config            (void *a_regex, void *a_unfind, void *a_hint, void *a_unhint)
+yMARK_config            (void *a_regex, void *a_unfind, void *a_hint)
 {
    /*---(locals)-----------+-----+-----+-*/
    char        rce         =  -10;
@@ -133,24 +132,9 @@ yMARK_config            (void *a_regex, void *a_unfind, void *a_hint, void *a_un
       if (!yMODE_operational (SMOD_HINT)) {
          DEBUG_SRCH   yLOG_note    ("without hint marker callback, hinting can not function");
          myMARK.e_hint     = NULL;
-         myMARK.e_unhint   = NULL;
       }
    } else {
       myMARK.e_hint    = a_hint;
-   }
-   /*---(update unhint)------------------*/
-   DEBUG_SRCH   yLOG_point   ("a_unhint"  , a_unhint);
-   --rce;  if (a_unhint  == NULL) {
-      if (!yMODE_operational (SMOD_HINT)) {
-         DEBUG_SRCH   yLOG_note    ("without hint clearer callback, hinting can not function");
-         myMARK.e_hint     = NULL;
-         myMARK.e_unhint   = NULL;
-      }
-   } else {
-      myMARK.e_unhint  = a_unhint;
-   }
-   /*---(update status)------------------*/
-   if (a_hint != NULL && a_unhint != NULL) {
       yMODE_conf_set   (SMOD_HINT  , '1');
    }
    /*---(complete)-----------------------*/

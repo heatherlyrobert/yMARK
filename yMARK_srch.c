@@ -5,17 +5,29 @@
 
 /*
  * metis § dc4#· § get very simple unit test for regex searching in place                 § M255NH §  8 §
- * metis § wc4·· § add regex searching to metis to test interface                         § M255Pp §  · §
- * metis § wc4·· § replace regex searching in gyges to test interface                     § M255Pq §  · §
+ * metis § wc4#· § add regex searching to metis to test interface                         § M255Pp § 14 §
+ * metis § wc4#· § replace regex searching in gyges to test interface                     § M255Pq § 13 §
  * metis § tn4#· § build unit test for simple execute interface                           § M2F52k §  1 §
- * metis § tn4<· § build unit test for direct/command interface                           § M2F53Y §  · §
+ * metis § tn4#· § build unit test for direct/command interface                           § M2F53Y §  1 §
  *
- *
+ * METIS § wn2·· § ABCDEFGHIJKLMNOPQRSTUVWXYZ                                             § M2IKV4 §  · §
+ * METIS § wn2·· § abcdefghijklmnopqrstuvwxyz                                             § M2IKVO §  · §
+ * METIS § wn2·· § 0123456789                                                             § M2IKVZ §  · §
+ * METIS § wn2·· § èéêëìíîïðñòóôõö÷øùúûüýþÿ                                               § M2IKVi §  · §
  */
 
 /*
  *
  *  highlighting/selecting an area or range, restricts search to that space
+ *
+ *  add-on searches...
+ *     /first      initial search
+ *     /Ñsecond    conducts a second on top and then OR's the results
+ *     /Ðsecond    conducts a second on top and then AND's the results
+ *     /Òsecond    conducts a second on top and then XOR's the results
+ *
+ *  reverse searches...
+ *     /™first     all things NOT matching
  *
  *  simple reuse (0-9)
  *     //0     repeats last search
@@ -37,6 +49,20 @@
  *     :search a+    accept a from clip file
  *     :search a-    save a to clip file
  *     :search a#    clear
+ *     :search _     show search/find status
+ *     :search ?     history window
+ *     :search +     results of search highlighted
+ *     :search -     results of search not highlighted
+ *     :search a>    put in unnammed (¶) sreg
+ *     :search a<    load from unnammed (¶) sreg
+ *     :search a<··· load from central repository file
+ *     :search a~··· load from user repository file
+ *
+ *  cursoring...
+ *     :search [
+ *     :search <
+ *     :search >
+ *     :search ]
  *
  *  naming  ´ common searches can be saved to global library with short name
  *     these searches can also be loaded into è to ÿ to keep them separate
@@ -525,7 +551,7 @@ yMARK_execute         (uchar *a_search)
    }
    DEBUG_SRCH   yLOG_value   ("s_layers"  , s_layers);
    DEBUG_SRCH   yLOG_info    ("x_search"  , x_search);
-   x_rc = myMARK.e_regex (x_search);
+   x_rc = myMARK.e_regex ('-', x_search);
    DEBUG_SRCH   yLOG_value   ("x_rc"      , x_rc);
    --rce;  if (x_rc < 0) {
       DEBUG_SRCH   yLOG_exitr   (__FUNCTION__, rce);
@@ -576,6 +602,8 @@ yMARK_execute         (uchar *a_search)
    /*---(save result)--------------------*/
    x_new->found = ymark_find_count ();
    ++(x_new->runs);
+   /*---(jump to head)-------------------*/
+   yMARK_find_hmode (' ', '[');
    /*---(complete)-----------------------*/
    DEBUG_SRCH   yLOG_exit    (__FUNCTION__);
    return x_rc;
@@ -689,18 +717,18 @@ ymark_srch_export       (uchar a_abbr)
    char        rc          =    0;
    char        n           =   -1;
    /*---(header)-------------------------*/
-   DEBUG_YSRC   yLOG_enter   (__FUNCTION__);
+   DEBUG_SRCH   yLOG_enter   (__FUNCTION__);
    /*---(defense)------------------------*/
    DEBUG_SRCH   yLOG_char    ("a_abbr"    , a_abbr);
    n = ymark_srch_index  (a_abbr);
    --rce;  if (n <  0)  {
-      DEBUG_YSRC   yLOG_exitr   (__FUNCTION__, rce);
+      DEBUG_SRCH   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
    /*---(write)--------------------------*/
    rc = strlexport (0, S_SRCHS [n]->text);
    /*---(complete)-----------------------*/
-   DEBUG_YSRC   yLOG_exit    (__FUNCTION__);
+   DEBUG_SRCH   yLOG_exit    (__FUNCTION__);
    return rc;
 }
 
@@ -714,7 +742,7 @@ ymark_srch_import       (uchar a_abbr)
    int         n           =    0;
    tSRCH      *x_new       = NULL;
    /*---(header)-------------------------*/
-   DEBUG_YSRC   yLOG_enter   (__FUNCTION__);
+   DEBUG_SRCH   yLOG_enter   (__FUNCTION__);
    /*---(defense)------------------------*/
    DEBUG_SRCH   yLOG_char    ("a_abbr"    , a_abbr);
    n = ymark_srch_index  (a_abbr);
@@ -725,12 +753,12 @@ ymark_srch_import       (uchar a_abbr)
    }
    /*---(read)---------------------------*/
    rc = strlimport  (0, x_recd, NULL);
-   DEBUG_YSRC   yLOG_value   ("read"      , rc);
+   DEBUG_SRCH   yLOG_value   ("read"      , rc);
    --rce;  if (rc < 0) {
-      DEBUG_YSRC   yLOG_exitr   (__FUNCTION__, rce);
+      DEBUG_SRCH   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
-   DEBUG_YSRC   yLOG_info    ("x_recd"    , x_recd);
+   DEBUG_SRCH   yLOG_info    ("x_recd"    , x_recd);
    /*---(save search to history)---------*/
    rc = ymark_srch_new (x_recd, '-', &x_new);
    DEBUG_SRCH   yLOG_point   ("x_new"     , x_new);
@@ -740,7 +768,7 @@ ymark_srch_import       (uchar a_abbr)
    }
    S_SRCHS [n] = x_new;
    /*---(complete)-----------------------*/
-   DEBUG_YSRC   yLOG_exit    (__FUNCTION__);
+   DEBUG_SRCH   yLOG_exit    (__FUNCTION__);
    return rc;
 }
 
@@ -753,32 +781,170 @@ ymark_srch_copy         (uchar a_src, uchar a_dst)
    char        s           =   -1;
    char        d           =   -1;
    /*---(header)-------------------------*/
-   DEBUG_YSRC   yLOG_enter   (__FUNCTION__);
+   DEBUG_SRCH   yLOG_enter   (__FUNCTION__);
    /*---(defense)------------------------*/
-   DEBUG_YSRC   yLOG_char    ("a_src"       , a_src);
-   s = ysrc_sreg_index  (a_src);
-   DEBUG_YSRC   yLOG_value   ("s"         , s);
-   DEBUG_YSRC   yLOG_point   ("S_SRCHS"   , S_SRCHS [s]);
+   DEBUG_SRCH   yLOG_char    ("a_src"       , a_src);
+   s = ymark_srch_index  (a_src);
+   DEBUG_SRCH   yLOG_value   ("s"         , s);
+   DEBUG_SRCH   yLOG_point   ("S_SRCHS"   , S_SRCHS [s]);
    --rce;  if (s <  0 || S_SRCHS [s] == NULL) {
-      DEBUG_YSRC   yLOG_exitr   (__FUNCTION__, rce);
+      DEBUG_SRCH   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
-   DEBUG_YSRC   yLOG_char    ("a_dst"       , a_dst);
-   d = ysrc_sreg_index  (a_dst);
-   DEBUG_YSRC   yLOG_value   ("d"         , d);
+   DEBUG_SRCH   yLOG_char    ("a_dst"       , a_dst);
+   d = ymark_srch_index  (a_dst);
+   DEBUG_SRCH   yLOG_value   ("d"         , d);
    --rce;  if (s <  0) {
-      DEBUG_YSRC   yLOG_exitr   (__FUNCTION__, rce);
+      DEBUG_SRCH   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
    /*---(copy)---------------------------*/
    S_SRCHS [d] = S_SRCHS [s];
    /*---(complete)-----------------------*/
-   DEBUG_YSRC   yLOG_exit    (__FUNCTION__);
+   DEBUG_SRCH   yLOG_exit    (__FUNCTION__);
+   return rc;
+}
+
+char
+ymark_srch_full         (uchar a_abbr, uchar *a_text)
+{
+   /*---(locals)-----------+-----+-----+-*/
+   char        rce         =  -10;
+   char        rc          =    0;
+   char        n           =   -1;
+   char        x_text      [LEN_RECD]  = "";
+   tSRCH      *x_new       = NULL;
+   /*---(header)-------------------------*/
+   DEBUG_SRCH   yLOG_enter   (__FUNCTION__);
+   /*---(defense)------------------------*/
+   DEBUG_SRCH   yLOG_char    ("a_abbr"      , a_abbr);
+   n = ymark_srch_index  (a_abbr);
+   DEBUG_SRCH   yLOG_value   ("n"         , n);
+   --rce;  if (n <  0) {
+      DEBUG_SRCH   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
+   DEBUG_SRCH   yLOG_point   ("a_text"    , a_text);
+   --rce;  if (a_text == NULL) {
+      DEBUG_SRCH   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
+   DEBUG_SRCH   yLOG_info    ("a_text"    , a_text);
+   /*---(check quoting)------------------*/
+   strlcpy     (x_text, a_text, LEN_RECD);
+   strltrim    (x_text, ySTR_BOTH, LEN_RECD);
+   strldequote (x_text, LEN_RECD);
+   /*---(save search to history)---------*/
+   rc = ymark_srch_new (x_text, '-', &x_new);
+   DEBUG_SRCH   yLOG_point   ("x_new"     , x_new);
+   --rce;  if (x_new == NULL) {
+      DEBUG_SRCH   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
+   /*---(add mark)-----------------------*/
+   rc = ymark_srch_mark (a_abbr);
+   DEBUG_SRCH   yLOG_value   ("marking"   , rc);
+   if (rc < 0) {
+      DEBUG_SRCH   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
+   /*---(complete)-----------------------*/
+   DEBUG_SRCH   yLOG_exit    (__FUNCTION__);
+   return rc;
+}
+
+char
+ymark_srch_central      (uchar a_abbr, uchar *a_key)
+{
+   /*---(locals)-----------+-----+-----+-*/
+   char        rce         =  -10;
+   char        rc          =    0;
+   char        n           =    0;
+   FILE       *f           = NULL;
+   char        x_recd      [LEN_RECD];
+   char        x_seek      [LEN_LABEL];
+   char        x_key       [LEN_RECD];
+   int         x_len       =    0;
+   char        x_direct    [LEN_RECD];
+   char        x_found     =  '-';
+   int         c           =    0;
+   char       *p           = NULL;
+   char       *q           = "§";
+   char       *r           = NULL;
+   /*---(header)-------------------------*/
+   DEBUG_SRCH   yLOG_enter   (__FUNCTION__);
+   /*---(defense)------------------------*/
+   DEBUG_SRCH   yLOG_char    ("a_abbr"      , a_abbr);
+   n = ymark_srch_index  (a_abbr);
+   DEBUG_SRCH   yLOG_value   ("n"         , n);
+   --rce;  if (n <  0) {
+      DEBUG_SRCH   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
+   DEBUG_SRCH   yLOG_point   ("a_key"     , a_key);
+   --rce;  if (a_key == NULL) {
+      DEBUG_SRCH   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
+   DEBUG_SRCH   yLOG_info    ("a_key"     , a_key);
+   x_len = strlen (x_key);
+   DEBUG_SRCH   yLOG_value   ("x_len"     , x_len);
+   --rce;  if (x_len < 1) {
+      DEBUG_SRCH   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
+   /*---(open)---------------------------*/
+   f = fopen (SEARCH_REPO, "rt");
+   DEBUG_SRCH   yLOG_point   ("f"         , f);
+   --rce;  if (f == NULL)  {
+      DEBUG_SRCH   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
+   /*---(read)---------------------------*/
+   --rce;  while (x_found == '-') {
+      /*---(read)------------------------*/
+      if (feof (f))                   break;
+      fgets (x_recd, LEN_RECD, f);
+      ++c;
+      /*---(filter)----------------------*/
+      if (x_recd [0] == '\0')         continue;
+      if (x_recd [0] == '\n')         continue;
+      if (x_recd [0] == '#')          continue;
+      if (x_recd [0] == ' ')          continue;
+      if (strlen (x_recd) < 22)       continue;
+      /*---(check key)-------------------*/
+      DEBUG_SRCH   yLOG_info    ("x_recd"    , x_recd);
+      p = strtok_r (x_recd, q, &r);
+      if (p == NULL || strcmp (p, a_key) != 0)  continue;
+      /*---(found)-----------------------*/
+      x_found = 'y';
+      p = strtok_r (NULL, q, &r);
+      strltrim (p, ySTR_BOTH, LEN_RECD);
+      break;
+      /*---(done)------------------------*/
+   }
+   /*---(close)--------------------------*/
+   fclose (f);
+   DEBUG_SRCH   yLOG_value   ("c"         , c);
+   DEBUG_SRCH   yLOG_char    ("x_found"   , x_found);
+   --rce;  if (x_found != 'y') {
+      DEBUG_SRCH   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
+   /*---(save)---------------------------*/
+   rc = ymark_srch_full (a_abbr, p);
+   DEBUG_SRCH   yLOG_value   ("full"      , rc);
+   --rce;  if (rc < 0) {
+      DEBUG_SRCH   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
+   /*---(complete)-----------------------*/
+   DEBUG_SRCH   yLOG_exit    (__FUNCTION__);
    return rc;
 }
 
 char         /*-> tbd --------------------------------[ ------ [ge.#M5.1C#.#7]*/ /*-[03.0000.013.L]-*/ /*-[--.---.---.--]-*/
-ymark_srch_direct       (uchar *a_string)
+yMARK_srch_direct       (uchar *a_string)
 {
    /*---(locals)-----------+-----+-----+-*/
    char        rce         =  -10;
@@ -786,7 +952,7 @@ ymark_srch_direct       (uchar *a_string)
    int         x_len       =    0;
    char        x_abbr      =  '-';
    char        x_div       =  '-';
-   uchar      *x_divs      = "#-+>])=";
+   uchar      *x_divs      = "#-+>])=!";
    /*---(header)-------------------------*/
    DEBUG_SRCH   yLOG_enter   (__FUNCTION__);
    /*---(defense)------------------------*/
@@ -836,14 +1002,14 @@ ymark_srch_direct       (uchar *a_string)
    /*---(copy)---------------------------*/
    --rce;  if (x_len == 3 && x_div == '>') {
       rc = ymark_srch_copy   (x_abbr, a_string [2]);
-      DEBUG_YSRC   yLOG_exit    (__FUNCTION__);
+      DEBUG_SRCH   yLOG_exit    (__FUNCTION__);
       return rc;
    }
    /*---(move)---------------------------*/
    --rce;  if (x_len == 3 && x_div == ']') {
       rc = ymark_srch_copy   (x_abbr, a_string [2]);
       rc = ymark_srch_unmark (x_abbr);
-      DEBUG_YSRC   yLOG_exit    (__FUNCTION__);
+      DEBUG_SRCH   yLOG_exit    (__FUNCTION__);
       return rc;
    }
    /*---(swap)---------------------------*/
@@ -852,7 +1018,19 @@ ymark_srch_direct       (uchar *a_string)
       rc = ymark_srch_copy   (x_abbr      , a_string [2]);
       rc = ymark_srch_copy   ('.'         , x_abbr);
       rc = ymark_srch_unmark ('.');
-      DEBUG_YSRC   yLOG_exit    (__FUNCTION__);
+      DEBUG_SRCH   yLOG_exit    (__FUNCTION__);
+      return rc;
+   }
+   /*---(forcing)------------------------*/
+   --rce;  if (x_len >  2 && x_div == '=') {
+      rc = ymark_srch_full  (x_abbr, a_string + 2);
+      DEBUG_SRCH   yLOG_exit    (__FUNCTION__);
+      return rc;
+   }
+   /*---(global)-------------------------*/
+   --rce;  if (x_len >  2 && x_div == '!') {
+      /*> rc = yMACRO_central    (x_abbr, a_string);                                  <*/
+      DEBUG_SRCH   yLOG_exit    (__FUNCTION__);
       return rc;
    }
    /*---(complete)-----------------------*/
