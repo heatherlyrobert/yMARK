@@ -10,6 +10,9 @@
  * metis § tn4#· § build unit test for simple execute interface                           § M2F52k §  1 §
  * metis § tn4#· § build unit test for direct/command interface                           § M2F53Y §  1 §
  *
+ * metis § mv2·· § application logic for searching only in visual select area             § M2K2tg §  · §
+ *
+ *
  * METIS § wn2·· § ABCDEFGHIJKLMNOPQRSTUVWXYZ                                             § M2IKV4 §  · §
  * METIS § wn2·· § abcdefghijklmnopqrstuvwxyz                                             § M2IKVO §  · §
  * METIS § wn2·· § 0123456789                                                             § M2IKVZ §  · §
@@ -87,8 +90,8 @@
  *
  *
  *
- *
- */
+*
+*/
 
 
 
@@ -483,6 +486,7 @@ yMARK_execute         (uchar *a_search)
    tSRCH      *x_new       = NULL;
    tFIND      *x_find      = NULL;
    uchar       x_join      =  '-';
+   uchar       x_not       =  '-';
    char        x_search    [LEN_RECD]  = "";
    int         n           =    0;
    /*---(header)-------------------------*/
@@ -520,28 +524,51 @@ yMARK_execute         (uchar *a_search)
       return 0;
    }
    /*---(purge request)-----------------*/
-   x_join = a_search [1];
-   DEBUG_SRCH   yLOG_char    ("x_join"    , x_join);
-   --rce;  if (x_len == 1 || strchr (YSTR_CJOIN, x_join) == NULL) {
+   --rce;  if (x_len == 1) {
+      DEBUG_SRCH   yLOG_note    ("requested a specific purge of finds");
       ymark_find_purge ();
-      if (x_len == 1) {
-         DEBUG_SRCH   yLOG_note    ("requested a specific purge of finds");
-         DEBUG_SRCH   yLOG_exit    (__FUNCTION__);
-         return 0;
-      }
-      DEBUG_SRCH   yLOG_note    ("not a joining search, so purge first");
       strlcpy (x_search, a_search, LEN_RECD);
    } else {
+      x_join = a_search [1];
       DEBUG_SRCH   yLOG_char    ("x_join"    , x_join);
-      if (strchr (YSTR_SJOIN, x_join) == NULL) {
-         DEBUG_SRCH   yLOG_note    ("can not use complex joins in normal search line");
+      if (strchr (YSTR_SJOIN, x_join) != NULL) {
+         ++s_layers;
+         x_not  = a_search [2];
+         DEBUG_SRCH   yLOG_char    ("x_not"     , x_not);
+         if (x_len >= 4 && x_not == (uchar) '™') {
+            DEBUG_SRCH   yLOG_note    ("simple joining reverse search, so no purge");
+            snprintf (x_search, LEN_RECD, "/%s", a_search + 3);
+            x_not = 'y';
+         } else {
+            DEBUG_SRCH   yLOG_note    ("simple joining normal search, so no purge");
+            snprintf (x_search, LEN_RECD, "/%s", a_search + 2);
+            x_not = '-';
+         }
+      } else if (strchr (YSTR_CJOIN, x_join) != NULL) {
+         DEBUG_SRCH   yLOG_note    ("can not use complex joins in normal search line, purging");
          ymark_find_purge ();
+         x_join = '-';
+         x_not  = '-';
          DEBUG_SRCH   yLOG_exitr   (__FUNCTION__, rce);
          return rce;
+      } else {
+         DEBUG_SRCH   yLOG_note    ("not a joining search, so purge first");
+         ymark_find_purge ();
+         x_join = '-';
+         x_not  = a_search [1];
+         DEBUG_SRCH   yLOG_char    ("x_not"     , x_not);
+         if (x_len >= 3 && x_not == (uchar) '™') {
+            DEBUG_SRCH   yLOG_note    ("simple reverse search, clear first");
+            snprintf (x_search, LEN_RECD, "/%s", a_search + 2);
+            x_not = 'y';
+         } else {
+            DEBUG_SRCH   yLOG_note    ("simple normal search, clear first");
+            strlcpy (x_search, a_search, LEN_RECD);
+            x_not = '-';
+         }
       }
-      snprintf (x_search, LEN_RECD, "/%s", a_search + 2);
-      ++s_layers;
    }
+   DEBUG_SRCH   yLOG_complex ("mods"      , "%c join, %c not", x_join, x_not);
    /*---(handle)------------------------*/
    DEBUG_SRCH   yLOG_point   ("e_regex"   , myMARK.e_regex);
    DEBUG_SRCH   yLOG_point   ("unit"      , ymark__unit_regex);
@@ -551,7 +578,7 @@ yMARK_execute         (uchar *a_search)
    }
    DEBUG_SRCH   yLOG_value   ("s_layers"  , s_layers);
    DEBUG_SRCH   yLOG_info    ("x_search"  , x_search);
-   x_rc = myMARK.e_regex ('-', x_search);
+   x_rc = myMARK.e_regex (x_not, x_search);
    DEBUG_SRCH   yLOG_value   ("x_rc"      , x_rc);
    --rce;  if (x_rc < 0) {
       DEBUG_SRCH   yLOG_exitr   (__FUNCTION__, rce);

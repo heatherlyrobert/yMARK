@@ -37,7 +37,7 @@
 #define     P_VERMAJOR  "2.--, clean, improve, and expand"
 #define     P_VERMINOR  "2.0-, separated into independent library"
 #define     P_VERNUM    "2.0c"
-#define     P_VERTXT    "search/regex interface integrated into gyges and metis"
+#define     P_VERTXT    "regex now handles join and not, plus purge redraws"
 
 #define     P_PRIORITY  "direct, simple, brief, vigorous, and lucid (h.w. fowler)"
 #define     P_PRINCIPAL "[grow a set] and build your wings on the way down (r. bradbury)"

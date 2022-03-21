@@ -56,8 +56,9 @@ capabilities are automatically prepared and handled by
 required.
 .sp
 .nf
-.BI "char yMARK_config (char " "a_regex" ", char " "a_unfind" ", char " "a_hint" ");"
-.BI "char yMARK_found  (char *" "a_label" ", ushort " "u" ", ushort " "x" ", ushort " "y" ", ushort " "z" ");"
+.BI "char yMARK_config  (char " "a_regex" ", char " "a_unfind" ", char " "a_hint" ");"
+.BI "char yMARK_found   (uchar *" "a_label" ", ushort " "u" ", ushort " "x" ", ushort " "y" ", ushort " "z" ");"
+.BI "char yMARK_execute (uchar *" "a_search" ");"
 
 .SH C) CONFIGURATION
 the library uses a shared configuration call for both regex searching and
@@ -67,16 +68,19 @@ navigation hinting, marking requires no hinting.
 this configuration takes three function pointers from the source application --
 two for searching and one for hinting.
 
-.B 1. char a_regex  (uchar a_search);
+.B 1. char a_regex  (uchar a_not, uchar *a_search);
 
 MODERATE.  function pointer to compile the regex, walk through all applicable
 data object, test each, highlight found, and call back to the library for
-each positive find (yMARK_found).
+each positive find (yMARK_found).  a_not indicates a reverse search to return
+unmatched rather than matched.
 
-.B 2. char a_unfind (ushort u, ushort x, ushort y, ushort z);
+.B 2. char a_unfind (uchar *a_label, ushort u, x, y, z);
 
-SIMPLE. function pointer to locate the content based on coordinates and toggle
-off the find flag which typically allows highlighting.
+SIMPLE. function pointer to locate the content based on coordinates and
+toggle off the find flag which typically allows highlighting.  both label
+and coordinates are provided because applications may use one more easily
+than the other.
 
 .B 3. char a_hint   (uchar *a_hint)
 
@@ -89,11 +93,15 @@ since the
 library handles all the true complexity, this feature is relatively simple
 to implement and allows map-mode navigation using the [<>] standard keys.
 
-.SS yMARK_found (uchar *a_label, ushort u, ushort x, ushort y, ushort z);
+.SS yMARK_found (uchar *a_label, ushort u, x, y, z);
 within the application's
 .B a_regex
 function, whenever a match is found, it must call this function to register
 the find.
+
+.SS yMARK_execute (uchar *a_search);
+forces a search programatically that has exactly the same effect as if the
+user typed it in.  search string must start with a "/" to be valid.
 
 
 
