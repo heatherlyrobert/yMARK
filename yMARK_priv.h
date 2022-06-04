@@ -36,8 +36,8 @@
 
 #define     P_VERMAJOR  "2.--, clean, improve, and expand"
 #define     P_VERMINOR  "2.0-, separated into independent library"
-#define     P_VERNUM    "2.0c"
-#define     P_VERTXT    "regex now handles join and not, plus purge redraws"
+#define     P_VERNUM    "2.0d"
+#define     P_VERTXT    "added marks and unit testing for them"
 
 #define     P_PRIORITY  "direct, simple, brief, vigorous, and lucid (h.w. fowler)"
 #define     P_PRINCIPAL "[grow a set] and build your wings on the way down (r. bradbury)"
@@ -49,18 +49,21 @@
 #include    <stdio.h>             /* clibc  standard input/output             */
 #include    <stdlib.h>            /* clibc  standard general purpose          */
 #include    <string.h>            /* clibc  standard string handling          */
-/*---(custom)----------------------------*/
+/*---(custom core)-----------------------*/
 #include    <yURG.h>              /* heatherly urgent processing              */
 #include    <yLOG.h>              /* heatherly program logging                */
 #include    <ySTR.h>              /* heatherly string processing              */
-#include    <yMODE.h>             /* heatherly vi-keys mode control           */
-#include    <yKEYS.h>             /* heatherly vi-keys key handling           */
+/*---(custom vikeys)---------------------*/
+#include    <yMODE.h>             /* heatherly vi-keys mode processing        */
+#include    <yKEYS.h>             /* heatherly vi-keys mode processing        */
+#include    <yFILE.h>             /* heatherly vi-keys content file handling  */
+#include    <yMAP.h>              /* heatherly vi-keys location management    */
 #include    <yMACRO.h>            /* heatherly vi-keys macro processing       */
 #include    <yCMD.h>
-#include    <yMAP.h>              /* heatherly vi-keys location management    */
 #include    <ySRC.h>              /* heatherly vi-keys source editing         */
 #include    <yVIEW.h>             /* heatherly vi-keys view management        */
-#include    <yFILE.h>             /* heatherly vi-keys content file handling  */
+/*---(custom other)----------------------*/
+#include    <yPARSE.h>            /* heatherly file reading and writing       */
 #include    <yDLST_solo.h>
 #include    <ySORT.h>             /* heatherly sorting and searching          */
 
@@ -123,7 +126,7 @@ char        ymark__unit_quiet       (void);
 char        ymark__unit_loud        (void);
 char        ymark__unit_end         (void);
 char        ymark__unit_stub        (void);
-char        ymark__unit_regex       (char *a_search);
+char        ymark__unit_regex       (uchar a_not, uchar *a_search);
 char        ymark__unit_unfind      (ushort u, ushort x, ushort y, ushort z);
 char*       yMARK__unit             (char *a_question, int n);
 
@@ -182,6 +185,43 @@ char        yMARK_found             (uchar *a_label, ushort u, ushort x, ushort 
 char        yMARK_lost              (uchar *a_label);
 /*---(done)-----------------*/
 
+
+
+/*===[[ yMARK_mark.c ]]=======================================================*/
+/*··········>·······················>·········································*/
+/*---(program)--------------*/
+char        ymark_mark_init         (void);
+char        ymark_mark__purge       (char a_scope);
+/*---(support)--------------*/
+int         ymark_mark__index       (uchar a_abbr);
+/*---(setting)--------------*/
+char        ymark_mark__history     (uchar a_mark);
+char        ymark_mark__set         (uchar a_mark);
+char        ymark_mark__unset       (uchar a_mark);
+char        ymark_mark__return      (uchar a_mark);
+/*---(finding)--------------*/
+char        ymark_mark__which       (void);
+char        ymark_mark__find        (char *a_label);
+/*---(sequence)-------------*/
+char        ymark_mark__range       (void);
+char        ymark_mark__prev        (void);
+char        ymark_mark__next        (void);
+/*---(status)---------------*/
+char*       ymark_mark__data        (uchar a_mark);
+char        ymark_mark_info         (char *a_entry, int a_index);
+char        ymark_mark_status       (char *a_status);
+char        yMARK_marking           (char *a_label);
+char        ymark_mark_marklist     (char *a_list);
+char        ymark_mark_listplus     (char *a_list);
+/*---(file))----------------*/
+char        ymark_mark_writer       (int c, uchar a_abbr);
+char        yMARK_mark_writer_all   (void);
+char        yMARK_mark_reader       (int n, char *a_verb);
+/*---(command)--------------*/
+char        ymark_mark_direct       (char *a_string);
+/*---(mode)-----------------*/
+char        ymark_mark_smode        (uchar a_major, uchar a_minor);
+/*---(done)-----------------*/
 
 
 #endif

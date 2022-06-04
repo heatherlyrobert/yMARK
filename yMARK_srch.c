@@ -10,6 +10,8 @@
  * metis § tn4#· § build unit test for simple execute interface                           § M2F52k §  1 §
  * metis § tn4#· § build unit test for direct/command interface                           § M2F53Y §  1 §
  *
+ * metis § wv2<· § yMARK search cursoring with [><] not working right                     § M2OLDm §  · §
+ *
  * metis § mv2·· § application logic for searching only in visual select area             § M2K2tg §  · §
  *
  *
@@ -118,37 +120,37 @@ ymark_srch_init         (void)
    char        rc          =    0;
    int         i           =    0;
    /*---(header)-------------------------*/
-   DEBUG_SRCH   yLOG_enter   (__FUNCTION__);
+   DEBUG_YMARK   yLOG_enter   (__FUNCTION__);
    /*---(pointers)-----------------------*/
-   DEBUG_SRCH   yLOG_note    ("ground external pointers");
+   DEBUG_YMARK   yLOG_note    ("ground external pointers");
    myMARK.e_regex    = NULL;
    myMARK.e_unfind   = NULL;
    /*---(search btree)-------------------*/
    rc = ySORT_btree (B_SRCH, "searches");
-   DEBUG_SRCH   yLOG_value   ("btree"     , rc);
+   DEBUG_YMARK   yLOG_value   ("btree"     , rc);
    --rce;  if (rc < 0) {
-      DEBUG_SRCH   yLOG_exitr   (__FUNCTION__, rce);
+      DEBUG_YMARK   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
    /*---(search abbr list)---------------*/
    strlcpy (S_SRCH_LIST, YSTR_LOWER , S_SRCH_MAX);
    strlcat (S_SRCH_LIST, YSTR_GREEK , S_SRCH_MAX);
    strlcat (S_SRCH_LIST, "."        , S_SRCH_MAX);  /* temp spot */
-   DEBUG_SRCH   yLOG_info    ("LIST"      , S_SRCH_LIST);
+   DEBUG_YMARK   yLOG_info    ("LIST"      , S_SRCH_LIST);
    s_nlist  = strlen (S_SRCH_LIST);
-   DEBUG_SRCH   yLOG_value   ("s_nlist"   , s_nlist);
+   DEBUG_YMARK   yLOG_value   ("s_nlist"   , s_nlist);
    s_seq    = 0;
    s_layers = 0;
    /*---(purge marks)--------------------*/
    for (i = 0; i < s_nlist; ++i)  S_SRCHS [i] = NULL;
    /*---(mode)---------------------------*/
    rc = yMODE_init_set   (MODE_SEARCH, NULL, ySRC_mode);
-   DEBUG_SRCH   yLOG_value   ("mode set"  , rc);
+   DEBUG_YMARK   yLOG_value   ("mode set"  , rc);
    /*---(purge)--------------------------*/
    rc = ymark_srch_purge ();
-   DEBUG_SRCH   yLOG_value   ("purge"     , rc);
+   DEBUG_YMARK   yLOG_value   ("purge"     , rc);
    /*---(complete)-----------------------*/
-   DEBUG_SRCH   yLOG_exit    (__FUNCTION__);
+   DEBUG_YMARK   yLOG_exit    (__FUNCTION__);
    return 0;
 }
 
@@ -161,28 +163,28 @@ ymark_srch_purge        (void)
    tSRCH      *x_curr      = NULL;
    tSRCH      *x_next      = NULL;
    /*---(header)-------------------------*/
-   DEBUG_SRCH   yLOG_enter   (__FUNCTION__);
+   DEBUG_YMARK   yLOG_enter   (__FUNCTION__);
    /*---(globals)------------------------*/
    s_layers = 0;
    /*---(walk-through)-------------------*/
-   DEBUG_SRCH   yLOG_value   ("count"     , ySORT_count (B_SRCH));
+   DEBUG_YMARK   yLOG_value   ("count"     , ySORT_count (B_SRCH));
    rc = ySORT_by_cursor (B_SRCH, YDLST_HEAD, &x_curr);
-   DEBUG_PROG   yLOG_point   ("x_curr"     , x_curr);
+   DEBUG_YMARK   yLOG_point   ("x_curr"     , x_curr);
    while (x_curr != NULL) {
       rc = ySORT_by_cursor (B_SRCH, YDLST_NEXT, &x_next);
-      DEBUG_PROG   yLOG_point   ("x_next"     , x_next);
-      DEBUG_SRCH   yLOG_point   ("x_curr"     , x_curr);
+      DEBUG_YMARK   yLOG_point   ("x_next"     , x_next);
+      DEBUG_YMARK   yLOG_point   ("x_curr"     , x_curr);
       rc = ymark_srch_free (&x_curr);
       x_curr = x_next;
    }
    /*---(check)--------------------------*/
-   DEBUG_SRCH   yLOG_value   ("count"     , ySORT_count (B_SRCH));
+   DEBUG_YMARK   yLOG_value   ("count"     , ySORT_count (B_SRCH));
    --rce;  if (ySORT_count (B_SRCH) > 0) {
-      DEBUG_SRCH   yLOG_exitr   (__FUNCTION__, rce);
+      DEBUG_YMARK   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
    /*---(complete)-----------------------*/
-   DEBUG_SRCH   yLOG_exit    (__FUNCTION__);
+   DEBUG_YMARK   yLOG_exit    (__FUNCTION__);
    return 0;
 }
 
@@ -193,16 +195,16 @@ ymark_srch_wrap         (void)
    char        rce         =  -10;
    char        rc          =    0;
    /*---(header)-------------------------*/
-   DEBUG_SRCH   yLOG_enter   (__FUNCTION__);
+   DEBUG_YMARK   yLOG_enter   (__FUNCTION__);
    /*---(purge)--------------------------*/
    rc = ymark_srch_purge ();
-   DEBUG_SRCH   yLOG_value   ("purge"     , rc);
+   DEBUG_YMARK   yLOG_value   ("purge"     , rc);
    /*---(pointers)-----------------------*/
-   DEBUG_SRCH   yLOG_note    ("ground external pointers");
+   DEBUG_YMARK   yLOG_note    ("ground external pointers");
    myMARK.e_regex    = NULL;
    myMARK.e_unfind   = NULL;
    /*---(complete)-----------------------*/
-   DEBUG_SRCH   yLOG_exit    (__FUNCTION__);
+   DEBUG_YMARK   yLOG_exit    (__FUNCTION__);
    return 0;
 }
 
@@ -222,38 +224,38 @@ ymark_srch_new          (uchar *a_text, char a_force, tSRCH **r_new)
    tSRCH      *x_new       = NULL;
    int         x_tries     =    0;
    /*---(header)-------------------------*/
-   DEBUG_SRCH   yLOG_enter   (__FUNCTION__);
+   DEBUG_YMARK   yLOG_enter   (__FUNCTION__);
    /*---(check return)-------------------*/
-   DEBUG_SRCH   yLOG_point   ("r_new"     , r_new);
+   DEBUG_YMARK   yLOG_point   ("r_new"     , r_new);
    --rce;  if (r_new == NULL) {
-      DEBUG_SRCH   yLOG_exitr   (__FUNCTION__, rce);
+      DEBUG_YMARK   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
-   DEBUG_SRCH   yLOG_point   ("*r_new"    , *r_new);
+   DEBUG_YMARK   yLOG_point   ("*r_new"    , *r_new);
    --rce;  if (a_force != 'y' && *r_new != NULL) {
-      DEBUG_SRCH   yLOG_note    ("pointer is already set, not in force mode");
-      DEBUG_SRCH   yLOG_exitr   (__FUNCTION__, rce);
+      DEBUG_YMARK   yLOG_note    ("pointer is already set, not in force mode");
+      DEBUG_YMARK   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
-   DEBUG_SRCH   yLOG_point   ("a_text"    , a_text);
+   DEBUG_YMARK   yLOG_point   ("a_text"    , a_text);
    --rce;  if (a_text == NULL || strlen (a_text) <= 0) {
-      DEBUG_SRCH   yLOG_exitr   (__FUNCTION__, rce);
+      DEBUG_YMARK   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
-   DEBUG_SRCH   yLOG_info    ("a_text"    , a_text);
+   DEBUG_YMARK   yLOG_info    ("a_text"    , a_text);
    /*---(existing)-----------------------*/
    ymark_srch_by_text (a_text, r_new);
-   DEBUG_SRCH   yLOG_point   ("*r_new"    , *r_new);
+   DEBUG_YMARK   yLOG_point   ("*r_new"    , *r_new);
    --rce;  if (*r_new != NULL) {
-      DEBUG_SRCH   yLOG_note    ("already found, increasing counter");
+      DEBUG_YMARK   yLOG_note    ("already found, increasing counter");
       str2mongo (time (NULL), (*r_new)->runtime);
       strlpadn  (++s_seq, (*r_new)->seq, '.', '>', 6);
       rc = ySORT_prepare (B_SRCH);
       if (rc < 0) {
-         DEBUG_DATA   yLOG_exitr   (__FUNCTION__, rce);
+         DEBUG_YMARK   yLOG_exitr   (__FUNCTION__, rce);
          return rce;
       }
-      DEBUG_SRCH   yLOG_exit    (__FUNCTION__);
+      DEBUG_YMARK   yLOG_exit    (__FUNCTION__);
       return 1;
    }
    /*---(allocate)-----------------------*/
@@ -262,10 +264,10 @@ ymark_srch_new          (uchar *a_text, char a_force, tSRCH **r_new)
       x_new = (tSRCH *) malloc (sizeof (tSRCH));
       if (x_tries > 3)   break;
    }
-   DEBUG_SRCH   yLOG_value   ("x_tries"   , x_tries);
-   DEBUG_SRCH   yLOG_point   ("x_new"     , x_new);
+   DEBUG_YMARK   yLOG_value   ("x_tries"   , x_tries);
+   DEBUG_YMARK   yLOG_point   ("x_new"     , x_new);
    --rce;  if (x_new == NULL) {
-      DEBUG_SRCH   yLOG_exitr   (__FUNCTION__, rce);
+      DEBUG_YMARK   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
    /*---(wipe)---------------------------*/
@@ -276,21 +278,21 @@ ymark_srch_new          (uchar *a_text, char a_force, tSRCH **r_new)
    strlpadn  (++s_seq, x_new->seq, '.', '>', 6);
    /*---(into btree)---------------------*/
    rc = ySORT_hook (B_SRCH, x_new, x_new->seq, &x_new->btree);
-   DEBUG_SRCH   yLOG_value   ("btree"     , rc);
+   DEBUG_YMARK   yLOG_value   ("btree"     , rc);
    --rce;  if (rc < 0) {
-      DEBUG_SRCH   yLOG_exitr   (__FUNCTION__, rce);
+      DEBUG_YMARK   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
    /*---(update)-------------------------*/
    rc = ySORT_prepare (B_SRCH);
    if (rc < 0) {
-      DEBUG_DATA   yLOG_exitr   (__FUNCTION__, rce);
+      DEBUG_YMARK   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
    /*---(save return)--------------------*/
    *r_new = x_new;
    /*---(complete)-----------------------*/
-   DEBUG_SRCH   yLOG_exit    (__FUNCTION__);
+   DEBUG_YMARK   yLOG_exit    (__FUNCTION__);
    return rc;
 }
 
@@ -301,30 +303,30 @@ ymark_srch_free         (tSRCH **r_old)
    char        rce         =  -10;
    char        rc          =    0;
    /*---(header)-------------------------*/
-   DEBUG_SRCH   yLOG_enter   (__FUNCTION__);
+   DEBUG_YMARK   yLOG_enter   (__FUNCTION__);
    /*---(check return)-------------------*/
-   DEBUG_SRCH   yLOG_point   ("r_old"     , r_old);
+   DEBUG_YMARK   yLOG_point   ("r_old"     , r_old);
    --rce;  if (r_old == NULL) {
-      DEBUG_SRCH   yLOG_exitr   (__FUNCTION__, rce);
+      DEBUG_YMARK   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
-   DEBUG_SRCH   yLOG_point   ("*r_old"    , *r_old);
+   DEBUG_YMARK   yLOG_point   ("*r_old"    , *r_old);
    --rce;  if (*r_old == NULL) {
-      DEBUG_SRCH   yLOG_note    ("pointer was never set");
-      DEBUG_SRCH   yLOG_exitr   (__FUNCTION__, rce);
+      DEBUG_YMARK   yLOG_note    ("pointer was never set");
+      DEBUG_YMARK   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
    /*---(unhook from btree)--------------*/
    rc = ySORT_unhook (&(*r_old)->btree);
-   DEBUG_SRCH   yLOG_value   ("btree"     , rc);
+   DEBUG_YMARK   yLOG_value   ("btree"     , rc);
    --rce;  if (rc < 0) {
-      DEBUG_SRCH   yLOG_exitr   (__FUNCTION__, rce);
+      DEBUG_YMARK   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
    /*---(update)-------------------------*/
    rc = ySORT_prepare (B_SRCH);
    if (rc < 0) {
-      DEBUG_DATA   yLOG_exitr   (__FUNCTION__, rce);
+      DEBUG_YMARK   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
    /*---(clear and return)---------------*/
@@ -332,7 +334,7 @@ ymark_srch_free         (tSRCH **r_old)
    free (*r_old);
    *r_old = NULL;
    /*---(complete)-----------------------*/
-   DEBUG_SRCH   yLOG_exit    (__FUNCTION__);
+   DEBUG_YMARK   yLOG_exit    (__FUNCTION__);
    return 0;
 }
 
@@ -356,33 +358,33 @@ ymark_srch_by_text      (uchar *a_text, tSRCH **r_srch)
    tSRCH      *x_curr      = NULL;
    char        x_entry     [LEN_LABEL];
    /*---(header)-------------------------*/
-   DEBUG_SRCH   yLOG_enter   (__FUNCTION__);
+   DEBUG_YMARK   yLOG_enter   (__FUNCTION__);
    /*---(check return)-------------------*/
-   DEBUG_SRCH   yLOG_point   ("r_srch"    , r_srch);
+   DEBUG_YMARK   yLOG_point   ("r_srch"    , r_srch);
    --rce;  if (r_srch == NULL) {
-      DEBUG_SRCH   yLOG_exitr   (__FUNCTION__, rce);
+      DEBUG_YMARK   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
    *r_srch = NULL;
-   DEBUG_SRCH   yLOG_point   ("a_text"    , a_text);
+   DEBUG_YMARK   yLOG_point   ("a_text"    , a_text);
    --rce;  if (a_text == NULL) {
-      DEBUG_SRCH   yLOG_exitr   (__FUNCTION__, rce);
+      DEBUG_YMARK   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
-   DEBUG_SRCH   yLOG_info    ("a_text"    , a_text);
+   DEBUG_YMARK   yLOG_info    ("a_text"    , a_text);
    /*---(walk the list)------------------*/
    ymark_srch_by_cursor (YDLST_HEAD, &x_curr);
    while (x_curr != NULL) {
       if (strcmp (x_curr->text, a_text) == 0) {
-         DEBUG_SRCH   yLOG_note    ("found the match");
+         DEBUG_YMARK   yLOG_note    ("found the match");
          *r_srch = x_curr;
-         DEBUG_SRCH   yLOG_exit    (__FUNCTION__);
+         DEBUG_YMARK   yLOG_exit    (__FUNCTION__);
          return 1;
       }
       ymark_srch_by_cursor (YDLST_NEXT, &x_curr);
    }
    /*---(complete)-----------------------*/
-   DEBUG_SRCH   yLOG_exit    (__FUNCTION__);
+   DEBUG_YMARK   yLOG_exit    (__FUNCTION__);
    return 0;
 }
 
@@ -416,12 +418,12 @@ ymark_srch__entry       (int n, uchar a_abbr, tSRCH *a_srch)
    char        r           [LEN_HUND]  = "";
    char        s           [LEN_TERSE] = "  ·";
    char        t           [LEN_TERSE] = "  ·";
-   DEBUG_SRCH   yLOG_enter   (__FUNCTION__);
-   DEBUG_SRCH   yLOG_value   ("n"         , n);
-   DEBUG_SRCH   yLOG_char    ("a_abbr"    , a_abbr);
-   DEBUG_SRCH   yLOG_point   ("a_srch"    , a_srch);
+   DEBUG_YMARK   yLOG_enter   (__FUNCTION__);
+   DEBUG_YMARK   yLOG_value   ("n"         , n);
+   DEBUG_YMARK   yLOG_char    ("a_abbr"    , a_abbr);
+   DEBUG_YMARK   yLOG_point   ("a_srch"    , a_srch);
    if (a_srch == NULL) {
-      DEBUG_SRCH   yLOG_exit    (__FUNCTION__);
+      DEBUG_YMARK   yLOG_exit    (__FUNCTION__);
       return "n/a";
    }
    if (a_srch->text != NULL)  sprintf (r, "%2då%.40sæ", strlen (a_srch->text), a_srch->text);
@@ -429,7 +431,7 @@ ymark_srch__entry       (int n, uchar a_abbr, tSRCH *a_srch)
    if (a_srch->runs  > 0)     sprintf (t, "%3d", a_srch->runs);
    if (a_abbr == 0)  sprintf (g_print, "%-2d %-6.6s %-6.6s %-40.40s %-3.3s %-3.3s", n, a_srch->seq, a_srch->runtime, r, s, t);
    else              sprintf (g_print, "%c  %-6.6s %-6.6s %-40.40s %-3.3s %-3.3s", a_abbr, a_srch->seq, a_srch->runtime, r, s, t);
-   DEBUG_SRCH   yLOG_exit    (__FUNCTION__);
+   DEBUG_YMARK   yLOG_exit    (__FUNCTION__);
    return g_print;
 }
 
@@ -490,141 +492,141 @@ yMARK_execute         (uchar *a_search)
    char        x_search    [LEN_RECD]  = "";
    int         n           =    0;
    /*---(header)-------------------------*/
-   DEBUG_SRCH   yLOG_enter   (__FUNCTION__);
+   DEBUG_YMARK   yLOG_enter   (__FUNCTION__);
    /*---(defense)------------------------*/
    --rce;  if (!yMODE_operational (MODE_SEARCH)) {
-      DEBUG_SRCH   yLOG_note    ("can not execute until operational");
-      DEBUG_SRCH   yLOG_exitr   (__FUNCTION__, rce);
+      DEBUG_YMARK   yLOG_note    ("can not execute until operational");
+      DEBUG_YMARK   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
    /*---(defense)-----------------------*/
-   DEBUG_SRCH   yLOG_point   ("a_search"  , a_search);
+   DEBUG_YMARK   yLOG_point   ("a_search"  , a_search);
    --rce;  if (a_search == NULL) {
-      DEBUG_SRCH   yLOG_exitr   (__FUNCTION__, rce);
+      DEBUG_YMARK   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
-   DEBUG_SRCH   yLOG_info    ("a_search"  , a_search);
+   DEBUG_YMARK   yLOG_info    ("a_search"  , a_search);
    x_len = strlen (a_search);
    if (a_search [0] != '/') {
-      DEBUG_SRCH   yLOG_note    ("must start with a forward slash");
-      DEBUG_SRCH   yLOG_exitr   (__FUNCTION__, rce);
+      DEBUG_YMARK   yLOG_note    ("must start with a forward slash");
+      DEBUG_YMARK   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
    /*---(mark request)------------------*/
    --rce;  if (x_len == 4 && strncmp ("//m", a_search, 3) == 0) {
-      DEBUG_SRCH   yLOG_note    ("request to mark the last search");
-      DEBUG_SRCH   yLOG_char    ("mark"      , a_search [3]);
+      DEBUG_YMARK   yLOG_note    ("request to mark the last search");
+      DEBUG_YMARK   yLOG_char    ("mark"      , a_search [3]);
       rc = ymark_srch_mark (a_search [3]);
-      DEBUG_SRCH   yLOG_value   ("marking"   , rc);
+      DEBUG_YMARK   yLOG_value   ("marking"   , rc);
       if (rc < 0) {
-         DEBUG_SRCH   yLOG_exitr   (__FUNCTION__, rce);
+         DEBUG_YMARK   yLOG_exitr   (__FUNCTION__, rce);
          return rce;
       }
-      DEBUG_SRCH   yLOG_exit    (__FUNCTION__);
+      DEBUG_YMARK   yLOG_exit    (__FUNCTION__);
       return 0;
    }
    /*---(purge request)-----------------*/
    --rce;  if (x_len == 1) {
-      DEBUG_SRCH   yLOG_note    ("requested a specific purge of finds");
+      DEBUG_YMARK   yLOG_note    ("requested a specific purge of finds");
       ymark_find_purge ();
       strlcpy (x_search, a_search, LEN_RECD);
    } else {
       x_join = a_search [1];
-      DEBUG_SRCH   yLOG_char    ("x_join"    , x_join);
+      DEBUG_YMARK   yLOG_char    ("x_join"    , x_join);
       if (strchr (YSTR_SJOIN, x_join) != NULL) {
          ++s_layers;
          x_not  = a_search [2];
-         DEBUG_SRCH   yLOG_char    ("x_not"     , x_not);
+         DEBUG_YMARK   yLOG_char    ("x_not"     , x_not);
          if (x_len >= 4 && x_not == (uchar) '™') {
-            DEBUG_SRCH   yLOG_note    ("simple joining reverse search, so no purge");
+            DEBUG_YMARK   yLOG_note    ("simple joining reverse search, so no purge");
             snprintf (x_search, LEN_RECD, "/%s", a_search + 3);
             x_not = 'y';
          } else {
-            DEBUG_SRCH   yLOG_note    ("simple joining normal search, so no purge");
+            DEBUG_YMARK   yLOG_note    ("simple joining normal search, so no purge");
             snprintf (x_search, LEN_RECD, "/%s", a_search + 2);
             x_not = '-';
          }
       } else if (strchr (YSTR_CJOIN, x_join) != NULL) {
-         DEBUG_SRCH   yLOG_note    ("can not use complex joins in normal search line, purging");
+         DEBUG_YMARK   yLOG_note    ("can not use complex joins in normal search line, purging");
          ymark_find_purge ();
          x_join = '-';
          x_not  = '-';
-         DEBUG_SRCH   yLOG_exitr   (__FUNCTION__, rce);
+         DEBUG_YMARK   yLOG_exitr   (__FUNCTION__, rce);
          return rce;
       } else {
-         DEBUG_SRCH   yLOG_note    ("not a joining search, so purge first");
+         DEBUG_YMARK   yLOG_note    ("not a joining search, so purge first");
          ymark_find_purge ();
          x_join = '-';
          x_not  = a_search [1];
-         DEBUG_SRCH   yLOG_char    ("x_not"     , x_not);
+         DEBUG_YMARK   yLOG_char    ("x_not"     , x_not);
          if (x_len >= 3 && x_not == (uchar) '™') {
-            DEBUG_SRCH   yLOG_note    ("simple reverse search, clear first");
+            DEBUG_YMARK   yLOG_note    ("simple reverse search, clear first");
             snprintf (x_search, LEN_RECD, "/%s", a_search + 2);
             x_not = 'y';
          } else {
-            DEBUG_SRCH   yLOG_note    ("simple normal search, clear first");
+            DEBUG_YMARK   yLOG_note    ("simple normal search, clear first");
             strlcpy (x_search, a_search, LEN_RECD);
             x_not = '-';
          }
       }
    }
-   DEBUG_SRCH   yLOG_complex ("mods"      , "%c join, %c not", x_join, x_not);
+   DEBUG_YMARK   yLOG_complex ("mods"      , "%c join, %c not", x_join, x_not);
    /*---(handle)------------------------*/
-   DEBUG_SRCH   yLOG_point   ("e_regex"   , myMARK.e_regex);
-   DEBUG_SRCH   yLOG_point   ("unit"      , ymark__unit_regex);
+   DEBUG_YMARK   yLOG_point   ("e_regex"   , myMARK.e_regex);
+   DEBUG_YMARK   yLOG_point   ("unit"      , ymark__unit_regex);
    --rce;  if (myMARK.e_regex == NULL) {
-      DEBUG_SRCH   yLOG_exitr   (__FUNCTION__, rce);
+      DEBUG_YMARK   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
-   DEBUG_SRCH   yLOG_value   ("s_layers"  , s_layers);
-   DEBUG_SRCH   yLOG_info    ("x_search"  , x_search);
+   DEBUG_YMARK   yLOG_value   ("s_layers"  , s_layers);
+   DEBUG_YMARK   yLOG_info    ("x_search"  , x_search);
    x_rc = myMARK.e_regex (x_not, x_search);
-   DEBUG_SRCH   yLOG_value   ("x_rc"      , x_rc);
+   DEBUG_YMARK   yLOG_value   ("x_rc"      , x_rc);
    --rce;  if (x_rc < 0) {
-      DEBUG_SRCH   yLOG_exitr   (__FUNCTION__, rce);
+      DEBUG_YMARK   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
    /*---(save search to history)---------*/
    rc = ymark_srch_new (a_search, '-', &x_new);
-   DEBUG_SRCH   yLOG_point   ("x_new"     , x_new);
+   DEBUG_YMARK   yLOG_point   ("x_new"     , x_new);
    --rce;  if (x_new == NULL) {
-      DEBUG_SRCH   yLOG_exitr   (__FUNCTION__, rce);
+      DEBUG_YMARK   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
    /*---(handle joins)-------------------*/
    if (strchr (YSTR_SJOIN, x_join) != NULL) {
-      DEBUG_SRCH   yLOG_note    ("rationalize finds based on join");
-      DEBUG_SRCH   yLOG_value   ("before"    , ymark_find_count ());
+      DEBUG_YMARK   yLOG_note    ("rationalize finds based on join");
+      DEBUG_YMARK   yLOG_value   ("before"    , ymark_find_count ());
       ymark_find_by_index  (n, &x_find);
       while (x_find != NULL) {
          switch (x_join) {
          case G_CHAR_AND  : case 'Ð' :
             if (x_find->c < 2) {
-               DEBUG_SRCH   yLOG_complex ("Ð remove"  , "%3d#, %2dc %s", n, x_find->c, x_find->label);
+               DEBUG_YMARK   yLOG_complex ("Ð remove"  , "%3d#, %2dc %s", n, x_find->c, x_find->label);
                ymark_find_free (&x_find);
             } else  {
-               DEBUG_SRCH   yLOG_complex ("Ð skipped" , "%3d#, %2dc %s", n, x_find->c, x_find->label);
+               DEBUG_YMARK   yLOG_complex ("Ð skipped" , "%3d#, %2dc %s", n, x_find->c, x_find->label);
                ++n;
             }
             break;
          case G_CHAR_XOR  : case 'Ò' :
             if (x_find->c > 1) {
-               DEBUG_SRCH   yLOG_complex ("Ò remove"  , "%3d#, %2dc %s", n, x_find->c, x_find->label);
+               DEBUG_YMARK   yLOG_complex ("Ò remove"  , "%3d#, %2dc %s", n, x_find->c, x_find->label);
                ymark_find_free (&x_find);
             } else {
-               DEBUG_SRCH   yLOG_complex ("Ò skipped" , "%3d#, %2dc %s", n, x_find->c, x_find->label);
+               DEBUG_YMARK   yLOG_complex ("Ò skipped" , "%3d#, %2dc %s", n, x_find->c, x_find->label);
                ++n;
             }
             break;
          case G_CHAR_OR   : case 'Ñ' :
-            DEBUG_SRCH   yLOG_complex ("Ñ skipped" , "%3d#, %2dc %s", n, x_find->c, x_find->label);
+            DEBUG_YMARK   yLOG_complex ("Ñ skipped" , "%3d#, %2dc %s", n, x_find->c, x_find->label);
             ++n;
             break;
          }
          if (x_find != NULL)  x_find->c = 1;
          ymark_find_by_index (n, &x_find);
       }
-      DEBUG_SRCH   yLOG_value   ("after"     , ymark_find_count ());
+      DEBUG_YMARK   yLOG_value   ("after"     , ymark_find_count ());
    }
    /*---(save result)--------------------*/
    x_new->found = ymark_find_count ();
@@ -632,7 +634,7 @@ yMARK_execute         (uchar *a_search)
    /*---(jump to head)-------------------*/
    yMARK_find_hmode (' ', '[');
    /*---(complete)-----------------------*/
-   DEBUG_SRCH   yLOG_exit    (__FUNCTION__);
+   DEBUG_YMARK   yLOG_exit    (__FUNCTION__);
    return x_rc;
 }
 
@@ -652,29 +654,29 @@ ymark_srch_index        (uchar a_abbr)
    char       *q           = NULL;
    int         n           =   -1;
    /*---(header)-------------------------*/
-   DEBUG_SRCH   yLOG_senter  (__FUNCTION__);
+   DEBUG_YMARK   yLOG_senter  (__FUNCTION__);
    /*---(check)--------------------------*/
-   DEBUG_SRCH   yLOG_schar   (a_abbr);
+   DEBUG_YMARK   yLOG_schar   (a_abbr);
    --rce;  if (a_abbr == 0) {
-      DEBUG_SRCH   yLOG_sexitr  (__FUNCTION__, rce);
+      DEBUG_YMARK   yLOG_sexitr  (__FUNCTION__, rce);
       return rce;
    }
-   DEBUG_SRCH   yLOG_snote   ("check");
+   DEBUG_YMARK   yLOG_snote   ("check");
    p  = strchr (S_SRCH_LIST, a_abbr);
-   DEBUG_SRCH   yLOG_spoint  (p);
+   DEBUG_YMARK   yLOG_spoint  (p);
    --rce;  if (p == NULL) {
-      DEBUG_SRCH   yLOG_sexitr  (__FUNCTION__, rce);
+      DEBUG_YMARK   yLOG_sexitr  (__FUNCTION__, rce);
       return rce;
    }
    q  = strchr (S_SRCH_LIST, 'a');
    n = p - q;
-   DEBUG_SRCH   yLOG_sint    (n);
+   DEBUG_YMARK   yLOG_sint    (n);
    --rce;  if (n  < 0) {
-      DEBUG_SRCH   yLOG_sexitr  (__FUNCTION__, n);
+      DEBUG_YMARK   yLOG_sexitr  (__FUNCTION__, n);
       return n;
    }
    /*---(complete)-----------------------*/
-   DEBUG_SRCH   yLOG_sexit   (__FUNCTION__);
+   DEBUG_YMARK   yLOG_sexit   (__FUNCTION__);
    return n;
 }
 
@@ -686,30 +688,30 @@ ymark_srch_mark         (uchar a_abbr)
    int         n           =   -1;
    tSRCH      *x_tail      = NULL;
    /*---(header)-------------------------*/
-   DEBUG_SRCH   yLOG_enter   (__FUNCTION__);
+   DEBUG_YMARK   yLOG_enter   (__FUNCTION__);
    /*---(check)--------------------------*/
-   DEBUG_SRCH   yLOG_char    ("a_abbr"    , a_abbr);
+   DEBUG_YMARK   yLOG_char    ("a_abbr"    , a_abbr);
    --rce;  if (a_abbr == 0) {
-      DEBUG_SRCH   yLOG_exitr   (__FUNCTION__, rce);
+      DEBUG_YMARK   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
    n  = ymark_srch_index (a_abbr);
-   DEBUG_SRCH   yLOG_value   ("n"         , n);
+   DEBUG_YMARK   yLOG_value   ("n"         , n);
    --rce;  if (n  < 0) {
-      DEBUG_SRCH   yLOG_exitr   (__FUNCTION__, n);
+      DEBUG_YMARK   yLOG_exitr   (__FUNCTION__, n);
       return n;
    }
    /*---(save mark)----------------------*/
    ymark_srch_by_cursor (YDLST_TAIL, &x_tail);
-   DEBUG_SRCH   yLOG_point   ("x_tail"    , x_tail);
+   DEBUG_YMARK   yLOG_point   ("x_tail"    , x_tail);
    --rce;  if (x_tail == NULL) {
-      DEBUG_SRCH   yLOG_exitr (__FUNCTION__, rce);
+      DEBUG_YMARK   yLOG_exitr (__FUNCTION__, rce);
       return rce;
    }
    S_SRCHS [n] = x_tail;
-   DEBUG_SRCH   yLOG_point   ("S_SRCHS"   , S_SRCHS [n]);
+   DEBUG_YMARK   yLOG_point   ("S_SRCHS"   , S_SRCHS [n]);
    /*---(complete)-----------------------*/
-   DEBUG_SRCH   yLOG_exit    (__FUNCTION__);
+   DEBUG_YMARK   yLOG_exit    (__FUNCTION__);
    return 0;
 }
 
@@ -720,19 +722,19 @@ ymark_srch_unmark       (uchar a_abbr)
    char        rce         =  -10;
    int         n           =    0;
    /*---(header)-------------------------*/
-   DEBUG_SRCH   yLOG_enter   (__FUNCTION__);
+   DEBUG_YMARK   yLOG_enter   (__FUNCTION__);
    /*---(defense)------------------------*/
-   DEBUG_SRCH   yLOG_char    ("a_abbr"    , a_abbr);
+   DEBUG_YMARK   yLOG_char    ("a_abbr"    , a_abbr);
    n = ymark_srch_index  (a_abbr);
-   DEBUG_SRCH   yLOG_value   ("n"         , n);
+   DEBUG_YMARK   yLOG_value   ("n"         , n);
    --rce;  if (n < 0) {
-      DEBUG_SRCH   yLOG_exitr   (__FUNCTION__, rce);
+      DEBUG_YMARK   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
    /*---(clear)--------------------------*/
    S_SRCHS [n] = NULL;
    /*---(complete)-----------------------*/
-   DEBUG_SRCH   yLOG_exit    (__FUNCTION__);
+   DEBUG_YMARK   yLOG_exit    (__FUNCTION__);
    return 0;
 }
 
@@ -744,18 +746,18 @@ ymark_srch_export       (uchar a_abbr)
    char        rc          =    0;
    char        n           =   -1;
    /*---(header)-------------------------*/
-   DEBUG_SRCH   yLOG_enter   (__FUNCTION__);
+   DEBUG_YMARK   yLOG_enter   (__FUNCTION__);
    /*---(defense)------------------------*/
-   DEBUG_SRCH   yLOG_char    ("a_abbr"    , a_abbr);
+   DEBUG_YMARK   yLOG_char    ("a_abbr"    , a_abbr);
    n = ymark_srch_index  (a_abbr);
    --rce;  if (n <  0)  {
-      DEBUG_SRCH   yLOG_exitr   (__FUNCTION__, rce);
+      DEBUG_YMARK   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
    /*---(write)--------------------------*/
    rc = strlexport (0, S_SRCHS [n]->text);
    /*---(complete)-----------------------*/
-   DEBUG_SRCH   yLOG_exit    (__FUNCTION__);
+   DEBUG_YMARK   yLOG_exit    (__FUNCTION__);
    return rc;
 }
 
@@ -769,33 +771,33 @@ ymark_srch_import       (uchar a_abbr)
    int         n           =    0;
    tSRCH      *x_new       = NULL;
    /*---(header)-------------------------*/
-   DEBUG_SRCH   yLOG_enter   (__FUNCTION__);
+   DEBUG_YMARK   yLOG_enter   (__FUNCTION__);
    /*---(defense)------------------------*/
-   DEBUG_SRCH   yLOG_char    ("a_abbr"    , a_abbr);
+   DEBUG_YMARK   yLOG_char    ("a_abbr"    , a_abbr);
    n = ymark_srch_index  (a_abbr);
-   DEBUG_SRCH   yLOG_value   ("n"         , n);
+   DEBUG_YMARK   yLOG_value   ("n"         , n);
    --rce;  if (n < 0) {
-      DEBUG_SRCH   yLOG_exitr   (__FUNCTION__, rce);
+      DEBUG_YMARK   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
    /*---(read)---------------------------*/
    rc = strlimport  (0, x_recd, NULL);
-   DEBUG_SRCH   yLOG_value   ("read"      , rc);
+   DEBUG_YMARK   yLOG_value   ("read"      , rc);
    --rce;  if (rc < 0) {
-      DEBUG_SRCH   yLOG_exitr   (__FUNCTION__, rce);
+      DEBUG_YMARK   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
-   DEBUG_SRCH   yLOG_info    ("x_recd"    , x_recd);
+   DEBUG_YMARK   yLOG_info    ("x_recd"    , x_recd);
    /*---(save search to history)---------*/
    rc = ymark_srch_new (x_recd, '-', &x_new);
-   DEBUG_SRCH   yLOG_point   ("x_new"     , x_new);
+   DEBUG_YMARK   yLOG_point   ("x_new"     , x_new);
    --rce;  if (x_new == NULL) {
-      DEBUG_SRCH   yLOG_exitr   (__FUNCTION__, rce);
+      DEBUG_YMARK   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
    S_SRCHS [n] = x_new;
    /*---(complete)-----------------------*/
-   DEBUG_SRCH   yLOG_exit    (__FUNCTION__);
+   DEBUG_YMARK   yLOG_exit    (__FUNCTION__);
    return rc;
 }
 
@@ -808,27 +810,27 @@ ymark_srch_copy         (uchar a_src, uchar a_dst)
    char        s           =   -1;
    char        d           =   -1;
    /*---(header)-------------------------*/
-   DEBUG_SRCH   yLOG_enter   (__FUNCTION__);
+   DEBUG_YMARK   yLOG_enter   (__FUNCTION__);
    /*---(defense)------------------------*/
-   DEBUG_SRCH   yLOG_char    ("a_src"       , a_src);
+   DEBUG_YMARK   yLOG_char    ("a_src"       , a_src);
    s = ymark_srch_index  (a_src);
-   DEBUG_SRCH   yLOG_value   ("s"         , s);
-   DEBUG_SRCH   yLOG_point   ("S_SRCHS"   , S_SRCHS [s]);
+   DEBUG_YMARK   yLOG_value   ("s"         , s);
+   DEBUG_YMARK   yLOG_point   ("S_SRCHS"   , S_SRCHS [s]);
    --rce;  if (s <  0 || S_SRCHS [s] == NULL) {
-      DEBUG_SRCH   yLOG_exitr   (__FUNCTION__, rce);
+      DEBUG_YMARK   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
-   DEBUG_SRCH   yLOG_char    ("a_dst"       , a_dst);
+   DEBUG_YMARK   yLOG_char    ("a_dst"       , a_dst);
    d = ymark_srch_index  (a_dst);
-   DEBUG_SRCH   yLOG_value   ("d"         , d);
+   DEBUG_YMARK   yLOG_value   ("d"         , d);
    --rce;  if (s <  0) {
-      DEBUG_SRCH   yLOG_exitr   (__FUNCTION__, rce);
+      DEBUG_YMARK   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
    /*---(copy)---------------------------*/
    S_SRCHS [d] = S_SRCHS [s];
    /*---(complete)-----------------------*/
-   DEBUG_SRCH   yLOG_exit    (__FUNCTION__);
+   DEBUG_YMARK   yLOG_exit    (__FUNCTION__);
    return rc;
 }
 
@@ -842,41 +844,41 @@ ymark_srch_full         (uchar a_abbr, uchar *a_text)
    char        x_text      [LEN_RECD]  = "";
    tSRCH      *x_new       = NULL;
    /*---(header)-------------------------*/
-   DEBUG_SRCH   yLOG_enter   (__FUNCTION__);
+   DEBUG_YMARK   yLOG_enter   (__FUNCTION__);
    /*---(defense)------------------------*/
-   DEBUG_SRCH   yLOG_char    ("a_abbr"      , a_abbr);
+   DEBUG_YMARK   yLOG_char    ("a_abbr"      , a_abbr);
    n = ymark_srch_index  (a_abbr);
-   DEBUG_SRCH   yLOG_value   ("n"         , n);
+   DEBUG_YMARK   yLOG_value   ("n"         , n);
    --rce;  if (n <  0) {
-      DEBUG_SRCH   yLOG_exitr   (__FUNCTION__, rce);
+      DEBUG_YMARK   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
-   DEBUG_SRCH   yLOG_point   ("a_text"    , a_text);
+   DEBUG_YMARK   yLOG_point   ("a_text"    , a_text);
    --rce;  if (a_text == NULL) {
-      DEBUG_SRCH   yLOG_exitr   (__FUNCTION__, rce);
+      DEBUG_YMARK   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
-   DEBUG_SRCH   yLOG_info    ("a_text"    , a_text);
+   DEBUG_YMARK   yLOG_info    ("a_text"    , a_text);
    /*---(check quoting)------------------*/
    strlcpy     (x_text, a_text, LEN_RECD);
    strltrim    (x_text, ySTR_BOTH, LEN_RECD);
    strldequote (x_text, LEN_RECD);
    /*---(save search to history)---------*/
    rc = ymark_srch_new (x_text, '-', &x_new);
-   DEBUG_SRCH   yLOG_point   ("x_new"     , x_new);
+   DEBUG_YMARK   yLOG_point   ("x_new"     , x_new);
    --rce;  if (x_new == NULL) {
-      DEBUG_SRCH   yLOG_exitr   (__FUNCTION__, rce);
+      DEBUG_YMARK   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
    /*---(add mark)-----------------------*/
    rc = ymark_srch_mark (a_abbr);
-   DEBUG_SRCH   yLOG_value   ("marking"   , rc);
+   DEBUG_YMARK   yLOG_value   ("marking"   , rc);
    if (rc < 0) {
-      DEBUG_SRCH   yLOG_exitr   (__FUNCTION__, rce);
+      DEBUG_YMARK   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
    /*---(complete)-----------------------*/
-   DEBUG_SRCH   yLOG_exit    (__FUNCTION__);
+   DEBUG_YMARK   yLOG_exit    (__FUNCTION__);
    return rc;
 }
 
@@ -899,32 +901,32 @@ ymark_srch_central      (uchar a_abbr, uchar *a_key)
    char       *q           = "§";
    char       *r           = NULL;
    /*---(header)-------------------------*/
-   DEBUG_SRCH   yLOG_enter   (__FUNCTION__);
+   DEBUG_YMARK   yLOG_enter   (__FUNCTION__);
    /*---(defense)------------------------*/
-   DEBUG_SRCH   yLOG_char    ("a_abbr"      , a_abbr);
+   DEBUG_YMARK   yLOG_char    ("a_abbr"      , a_abbr);
    n = ymark_srch_index  (a_abbr);
-   DEBUG_SRCH   yLOG_value   ("n"         , n);
+   DEBUG_YMARK   yLOG_value   ("n"         , n);
    --rce;  if (n <  0) {
-      DEBUG_SRCH   yLOG_exitr   (__FUNCTION__, rce);
+      DEBUG_YMARK   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
-   DEBUG_SRCH   yLOG_point   ("a_key"     , a_key);
+   DEBUG_YMARK   yLOG_point   ("a_key"     , a_key);
    --rce;  if (a_key == NULL) {
-      DEBUG_SRCH   yLOG_exitr   (__FUNCTION__, rce);
+      DEBUG_YMARK   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
-   DEBUG_SRCH   yLOG_info    ("a_key"     , a_key);
+   DEBUG_YMARK   yLOG_info    ("a_key"     , a_key);
    x_len = strlen (x_key);
-   DEBUG_SRCH   yLOG_value   ("x_len"     , x_len);
+   DEBUG_YMARK   yLOG_value   ("x_len"     , x_len);
    --rce;  if (x_len < 1) {
-      DEBUG_SRCH   yLOG_exitr   (__FUNCTION__, rce);
+      DEBUG_YMARK   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
    /*---(open)---------------------------*/
    f = fopen (SEARCH_REPO, "rt");
-   DEBUG_SRCH   yLOG_point   ("f"         , f);
+   DEBUG_YMARK   yLOG_point   ("f"         , f);
    --rce;  if (f == NULL)  {
-      DEBUG_SRCH   yLOG_exitr   (__FUNCTION__, rce);
+      DEBUG_YMARK   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
    /*---(read)---------------------------*/
@@ -940,7 +942,7 @@ ymark_srch_central      (uchar a_abbr, uchar *a_key)
       if (x_recd [0] == ' ')          continue;
       if (strlen (x_recd) < 22)       continue;
       /*---(check key)-------------------*/
-      DEBUG_SRCH   yLOG_info    ("x_recd"    , x_recd);
+      DEBUG_YMARK   yLOG_info    ("x_recd"    , x_recd);
       p = strtok_r (x_recd, q, &r);
       if (p == NULL || strcmp (p, a_key) != 0)  continue;
       /*---(found)-----------------------*/
@@ -952,21 +954,21 @@ ymark_srch_central      (uchar a_abbr, uchar *a_key)
    }
    /*---(close)--------------------------*/
    fclose (f);
-   DEBUG_SRCH   yLOG_value   ("c"         , c);
-   DEBUG_SRCH   yLOG_char    ("x_found"   , x_found);
+   DEBUG_YMARK   yLOG_value   ("c"         , c);
+   DEBUG_YMARK   yLOG_char    ("x_found"   , x_found);
    --rce;  if (x_found != 'y') {
-      DEBUG_SRCH   yLOG_exitr   (__FUNCTION__, rce);
+      DEBUG_YMARK   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
    /*---(save)---------------------------*/
    rc = ymark_srch_full (a_abbr, p);
-   DEBUG_SRCH   yLOG_value   ("full"      , rc);
+   DEBUG_YMARK   yLOG_value   ("full"      , rc);
    --rce;  if (rc < 0) {
-      DEBUG_SRCH   yLOG_exitr   (__FUNCTION__, rce);
+      DEBUG_YMARK   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
    /*---(complete)-----------------------*/
-   DEBUG_SRCH   yLOG_exit    (__FUNCTION__);
+   DEBUG_YMARK   yLOG_exit    (__FUNCTION__);
    return rc;
 }
 
@@ -981,35 +983,35 @@ yMARK_srch_direct       (uchar *a_string)
    char        x_div       =  '-';
    uchar      *x_divs      = "#-+>])=!";
    /*---(header)-------------------------*/
-   DEBUG_SRCH   yLOG_enter   (__FUNCTION__);
+   DEBUG_YMARK   yLOG_enter   (__FUNCTION__);
    /*---(defense)------------------------*/
    --rce;  if (!yMODE_operational (MODE_SEARCH)) {
-      DEBUG_SRCH   yLOG_note    ("can not execute until operational");
-      DEBUG_SRCH   yLOG_exitr   (__FUNCTION__, rce);
+      DEBUG_YMARK   yLOG_note    ("can not execute until operational");
+      DEBUG_YMARK   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
    /*---(defense)-----------------------*/
-   DEBUG_SRCH   yLOG_point   ("a_string"  , a_string);
+   DEBUG_YMARK   yLOG_point   ("a_string"  , a_string);
    --rce;  if (a_string == NULL) {
-      DEBUG_SRCH   yLOG_exitr   (__FUNCTION__, rce);
+      DEBUG_YMARK   yLOG_exitr   (__FUNCTION__, rce);
       return rc;
    }
    /*---(parse)-------------------------*/
    x_len = strlen (a_string);
-   DEBUG_SRCH   yLOG_value   ("x_len"     , x_len);
+   DEBUG_YMARK   yLOG_value   ("x_len"     , x_len);
    --rce;  if (x_len <= 1) {
-      DEBUG_SRCH   yLOG_exitr   (__FUNCTION__, rce);
+      DEBUG_YMARK   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
    x_abbr  = a_string [0];
-   DEBUG_SRCH   yLOG_char    ("x_abbr"      , x_abbr);
+   DEBUG_YMARK   yLOG_char    ("x_abbr"      , x_abbr);
    x_div   = a_string [1];
-   DEBUG_SRCH   yLOG_char    ("x_div"     , x_div);
+   DEBUG_YMARK   yLOG_char    ("x_div"     , x_div);
    /*---(check dividers)-----------------*/
-   DEBUG_SRCH   yLOG_info    ("x_divs"    , x_divs);
+   DEBUG_YMARK   yLOG_info    ("x_divs"    , x_divs);
    --rce;  if (strchr (x_divs, x_div) == NULL)  {
-      DEBUG_SRCH   yLOG_note    ("divider (x_div) not understood");
-      DEBUG_SRCH   yLOG_exitr   (__FUNCTION__, rce);
+      DEBUG_YMARK   yLOG_note    ("divider (x_div) not understood");
+      DEBUG_YMARK   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
    /*---(check for shorts)---------------*/
@@ -1019,24 +1021,24 @@ yMARK_srch_direct       (uchar *a_string)
       case '-' : rc = ymark_srch_export (x_abbr);        break;
       case '+' : rc = ymark_srch_import (x_abbr);        break;
       default  :
-                 DEBUG_SRCH   yLOG_note    ("divider (x_div) not a 2-char version");
-                 DEBUG_SRCH   yLOG_exitr   (__FUNCTION__, rce);
+                 DEBUG_YMARK   yLOG_note    ("divider (x_div) not a 2-char version");
+                 DEBUG_YMARK   yLOG_exitr   (__FUNCTION__, rce);
                  return rce;
       }
-      DEBUG_SRCH   yLOG_exit    (__FUNCTION__);
+      DEBUG_YMARK   yLOG_exit    (__FUNCTION__);
       return rc;
    }
    /*---(copy)---------------------------*/
    --rce;  if (x_len == 3 && x_div == '>') {
       rc = ymark_srch_copy   (x_abbr, a_string [2]);
-      DEBUG_SRCH   yLOG_exit    (__FUNCTION__);
+      DEBUG_YMARK   yLOG_exit    (__FUNCTION__);
       return rc;
    }
    /*---(move)---------------------------*/
    --rce;  if (x_len == 3 && x_div == ']') {
       rc = ymark_srch_copy   (x_abbr, a_string [2]);
       rc = ymark_srch_unmark (x_abbr);
-      DEBUG_SRCH   yLOG_exit    (__FUNCTION__);
+      DEBUG_YMARK   yLOG_exit    (__FUNCTION__);
       return rc;
    }
    /*---(swap)---------------------------*/
@@ -1045,23 +1047,23 @@ yMARK_srch_direct       (uchar *a_string)
       rc = ymark_srch_copy   (x_abbr      , a_string [2]);
       rc = ymark_srch_copy   ('.'         , x_abbr);
       rc = ymark_srch_unmark ('.');
-      DEBUG_SRCH   yLOG_exit    (__FUNCTION__);
+      DEBUG_YMARK   yLOG_exit    (__FUNCTION__);
       return rc;
    }
    /*---(forcing)------------------------*/
    --rce;  if (x_len >  2 && x_div == '=') {
       rc = ymark_srch_full  (x_abbr, a_string + 2);
-      DEBUG_SRCH   yLOG_exit    (__FUNCTION__);
+      DEBUG_YMARK   yLOG_exit    (__FUNCTION__);
       return rc;
    }
    /*---(global)-------------------------*/
    --rce;  if (x_len >  2 && x_div == '!') {
       /*> rc = yMACRO_central    (x_abbr, a_string);                                  <*/
-      DEBUG_SRCH   yLOG_exit    (__FUNCTION__);
+      DEBUG_YMARK   yLOG_exit    (__FUNCTION__);
       return rc;
    }
    /*---(complete)-----------------------*/
-   DEBUG_SRCH   yLOG_exit    (__FUNCTION__);
+   DEBUG_YMARK   yLOG_exit    (__FUNCTION__);
    return rc;
 }
 

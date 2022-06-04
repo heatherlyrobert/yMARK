@@ -25,7 +25,11 @@ char        yMARK_find_hmode        (uchar a_major, uchar a_minor);
 /*---(unittest)-------------*/
 char*       yMARK__unit             (char *a_question, int n);
 
+char        yMARK_marking           (char *a_label);
 
+char        yMARK_mark_writer_all   (void);
+char        yMARK_mark_reader       (int n, char *a_verb);
+char        yMARK_mark_status       (char a_size, short a_wide, char *a_list);
 
 #endif
 /*============================----end-of-source---============================*/

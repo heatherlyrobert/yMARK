@@ -19,12 +19,13 @@ ymark__unit_quiet       (void)
    char       *x_args [20]  = {"yMARK_unit" };
    yMODE_init (MODE_MAP);
    yMODE_handler_setup ();
+   yFILE_init ();
+   yCMD_init  ();
+   yKEYS_init           ();
+   yMAP__unit_wander    ();
+   ySRC_init            ();
+   yMACRO_init          ();
    yMARK_init ();
-   /*> yFILE_init ();                                                                 <*/
-   /*> yKEYS_init           ();                                                       <*/
-   /*> yMAP_init            ();                                                       <*/
-   /*> ySRC_init            ();                                                       <*/
-   /*> yMACRO_init          ();                                                       <*/
    return 0;
 }
 
@@ -43,26 +44,27 @@ ymark__unit_loud        (void)
    yURG_name  ("ysrc"         , YURG_ON);
    yURG_name  ("ymap"         , YURG_ON);
    yURG_name  ("ykeys"        , YURG_ON);
-   yURG_name  ("srch"         , YURG_ON);
+   yURG_name  ("ymark"        , YURG_ON);
    yURG_name  ("ysort"        , YURG_ON);
-   DEBUG_YCMD  yLOG_info     ("yMARK"     , yMARK_version   ());
+   DEBUG_YMARK  yLOG_info     ("yMARK"     , yMARK_version   ());
    yMODE_init (MODE_MAP);
    yMODE_handler_setup ();
+   yFILE_init ();
+   yCMD_init  ();
+   yKEYS_init           ();
+   yMAP__unit_wander    ();
+   ySRC_init            ();
+   yMACRO_init          ();
    yMARK_init ();
-   /*> yFILE_init ();                                                                 <*/
-   /*> yKEYS_init           ();                                                       <*/
-   /*> yMAP_init            ();                                                       <*/
-   /*> ySRC_init            ();                                                       <*/
-   /*> yMACRO_init          ();                                                       <*/
    return 0;
 }
 
 char       /*----: stop logging ----------------------------------------------*/
 ymark__unit_end         (void)
 {
-   DEBUG_YCMD  yLOG_enter   (__FUNCTION__);
+   DEBUG_YMARK  yLOG_enter   (__FUNCTION__);
    yCMD_wrap    ();
-   DEBUG_YCMD  yLOG_exit    (__FUNCTION__);
+   DEBUG_YMARK  yLOG_exit    (__FUNCTION__);
    yLOGS_end    ();
    return 0;
 }
@@ -70,38 +72,42 @@ ymark__unit_end         (void)
 char ymark__unit_stub        (void) { return 0; }
 
 char
-ymark__unit_regex       (char *a_search)
+ymark__unit_regex       (uchar a_not, uchar *a_search)
 {
-   DEBUG_SRCH  yLOG_enter   (__FUNCTION__);
-   if (a_search == NULL)  return 0;
+   DEBUG_YMARK  yLOG_enter   (__FUNCTION__);
+   DEBUG_YMARK  yLOG_point   ("a_search"  , a_search);
+   if (a_search == NULL) {
+      DEBUG_YMARK  yLOG_exit    (__FUNCTION__);
+      return 0;
+   }
    if      (strcmp ("/1st", a_search) == 0) {
-      DEBUG_SRCH   yLOG_note    ("found /1st");
+      DEBUG_YMARK   yLOG_note    ("found /1st");
       yMARK_found ("0k11"     ,   0,  10,  10,   0);
       yMARK_found ("0p12"     ,   0,  15,  11,   0);
       yMARK_found ("3d6"      ,   3,   3,   5,   0);
    }
    else if (strcmp ("/2nd", a_search) == 0) {
-      DEBUG_SRCH   yLOG_note    ("found /2nd");
+      DEBUG_YMARK   yLOG_note    ("found /2nd");
       yMARK_found ("0k11"     ,   0,  10,  10,   0);
       yMARK_found ("0b3"      ,   0,   1,   2,   0);
       yMARK_found ("2b5"      ,   2,   1,   4,   0);
       yMARK_found ("Za1"      ,  35,   0,   0,   0);
    }
    else if (strcmp ("/another", a_search) == 0) {
-      DEBUG_SRCH   yLOG_note    ("found /another");
+      DEBUG_YMARK   yLOG_note    ("found /another");
       yMARK_found ("2b5"      ,   2,   1,   4,   0);
    } else {
-      DEBUG_SRCH   yLOG_note    ("nothing found");
+      DEBUG_YMARK   yLOG_note    ("nothing found");
    }
-   DEBUG_SRCH  yLOG_exit    (__FUNCTION__);
+   DEBUG_YMARK  yLOG_exit    (__FUNCTION__);
    return 0;
 }
 
 char
 ymark__unit_unfind      (ushort u, ushort x, ushort y, ushort z)
 {
-   DEBUG_SRCH  yLOG_enter   (__FUNCTION__);
-   DEBUG_SRCH  yLOG_exit    (__FUNCTION__);
+   DEBUG_YMARK  yLOG_enter   (__FUNCTION__);
+   DEBUG_YMARK  yLOG_exit    (__FUNCTION__);
    return 0;
 }
 

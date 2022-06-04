@@ -49,29 +49,31 @@ yMARK_init               (void)
    char        rc          =    0;
    int         i           =    0;
    /*---(header)-------------------------*/
-   DEBUG_YCMD   yLOG_enter   (__FUNCTION__);
+   DEBUG_YMARK   yLOG_enter   (__FUNCTION__);
    /*---(defense)------------------------*/
    --rce;  if (!yMODE_check_prep  (MODE_SEARCH)) {
-      DEBUG_YCMD   yLOG_note    ("status is not ready for init");
-      DEBUG_YCMD   yLOG_exitr   (__FUNCTION__, rce);
+      DEBUG_YMARK   yLOG_note    ("status is not ready for init");
+      DEBUG_YMARK   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
    /*---(terms)--------------------------*/
-   DEBUG_YCMD   yLOG_note    ("initialize globals callbacks");
+   DEBUG_YMARK   yLOG_note    ("initialize globals callbacks");
    rc = ymark_srch_init ();
-   DEBUG_YCMD   yLOG_value   ("srch"      , rc);
+   DEBUG_YMARK   yLOG_value   ("srch"      , rc);
    rc = ymark_find_init ();
-   DEBUG_YCMD   yLOG_value   ("find"      , rc);
+   DEBUG_YMARK   yLOG_value   ("find"      , rc);
    myMARK.e_hint     = NULL;
+   rc = ymark_mark_init ();
+   DEBUG_YMARK   yLOG_value   ("mark"      , rc);
    /*---(other updates)------------------*/
    /*> rc = yFILE_dump_add ("cmds"      , "", "inventory of commands"       , ycmd_dump          );   <*/
    /*---(update status)------------------*/
-   rc = yMODE_init_set   (UMOD_MARK  , NULL, ymark__unit_stub);
-   DEBUG_YCMD   yLOG_value   ("mark"      , rc);
+   rc = yMODE_init_set   (MODE_SEARCH, NULL, ymark__unit_stub);
+   DEBUG_YMARK   yLOG_value   ("mark"      , rc);
    rc = yMODE_init_set   (SMOD_HINT  , NULL, ymark__unit_stub);
-   DEBUG_YCMD   yLOG_value   ("hint"      , rc);
+   DEBUG_YMARK   yLOG_value   ("hint"      , rc);
    /*---(complete)-----------------------*/
-   DEBUG_YCMD   yLOG_exit    (__FUNCTION__);
+   DEBUG_YMARK   yLOG_exit    (__FUNCTION__);
    return 0;
 }
 
@@ -89,34 +91,34 @@ yMARK_config            (void *a_regex, void *a_unfind, void *a_hint)
    /*---(locals)-----------+-----+-----+-*/
    char        rce         =  -10;
    /*---(header)-------------------------*/
-   DEBUG_SRCH  yLOG_enter   (__FUNCTION__);
+   DEBUG_YMARK  yLOG_enter   (__FUNCTION__);
    /*---(defense)------------------------*/
    --rce;  if (!yMODE_check_needs  (MODE_SEARCH)) {
-      DEBUG_SRCH   yLOG_note    ("init must complete before config");
-      DEBUG_SRCH   yLOG_exitr   (__FUNCTION__, rce);
+      DEBUG_YMARK   yLOG_note    ("init must complete before config");
+      DEBUG_YMARK   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
    /*---(update regex)-------------------*/
-   DEBUG_SRCH   yLOG_point   ("a_regex"   , a_regex);
+   DEBUG_YMARK   yLOG_point   ("a_regex"   , a_regex);
    --rce;  if (a_regex   == NULL) {
       if (!yMODE_operational (MODE_SEARCH)) {
-         DEBUG_SRCH   yLOG_note    ("without regex searcher callback, search can not function");
+         DEBUG_YMARK   yLOG_note    ("without regex searcher callback, search can not function");
          myMARK.e_regex    = NULL;
          myMARK.e_unfind   = NULL;
-         DEBUG_SRCH   yLOG_exitr   (__FUNCTION__, rce);
+         DEBUG_YMARK   yLOG_exitr   (__FUNCTION__, rce);
          return rce;
       }
    } else {
       myMARK.e_regex   = a_regex;
    }
    /*---(update unregex)-----------------*/
-   DEBUG_SRCH   yLOG_point   ("a_unfind"  , a_unfind);
+   DEBUG_YMARK   yLOG_point   ("a_unfind"  , a_unfind);
    --rce;  if (a_unfind == NULL) {
       if (!yMODE_operational (MODE_SEARCH)) {
-         DEBUG_SRCH   yLOG_note    ("without regex clearer callback, search can not function");
+         DEBUG_YMARK   yLOG_note    ("without regex clearer callback, search can not function");
          myMARK.e_regex    = NULL;
          myMARK.e_unfind   = NULL;
-         DEBUG_SRCH   yLOG_exitr   (__FUNCTION__, rce);
+         DEBUG_YMARK   yLOG_exitr   (__FUNCTION__, rce);
          return rce;
       }
    } else {
@@ -127,10 +129,10 @@ yMARK_config            (void *a_regex, void *a_unfind, void *a_hint)
       yMODE_conf_set   (MODE_SEARCH, '1');
    }
    /*---(update hint)--------------------*/
-   DEBUG_SRCH   yLOG_point   ("a_hint"    , a_hint);
+   DEBUG_YMARK   yLOG_point   ("a_hint"    , a_hint);
    --rce;  if (a_hint    == NULL) {
       if (!yMODE_operational (SMOD_HINT)) {
-         DEBUG_SRCH   yLOG_note    ("without hint marker callback, hinting can not function");
+         DEBUG_YMARK   yLOG_note    ("without hint marker callback, hinting can not function");
          myMARK.e_hint     = NULL;
       }
    } else {
@@ -138,7 +140,7 @@ yMARK_config            (void *a_regex, void *a_unfind, void *a_hint)
       yMODE_conf_set   (SMOD_HINT  , '1');
    }
    /*---(complete)-----------------------*/
-   DEBUG_SRCH   yLOG_exit    (__FUNCTION__);
+   DEBUG_YMARK   yLOG_exit    (__FUNCTION__);
    return 0;
 }
 
