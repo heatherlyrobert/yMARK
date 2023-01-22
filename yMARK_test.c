@@ -18,14 +18,12 @@ ymark__unit_quiet       (void)
    int         x_narg       = 1;
    char       *x_args [20]  = {"yMARK_unit" };
    yMODE_init (MODE_MAP);
-   yMODE_handler_setup ();
-   yFILE_init ();
-   yCMD_init  ();
-   yKEYS_init           ();
-   yMAP__unit_wander    ();
-   ySRC_init            ();
-   yMACRO_init          ();
+   yMODE_init_after ();
+   yKEYS_unit_handlers ();
+   yKEYS_init  ();
+   yKEYS_init_after ();
    yMARK_init ();
+   yMARK_init_after ();
    return 0;
 }
 
@@ -36,26 +34,24 @@ ymark__unit_loud        (void)
    char       *x_args [20]  = {"yMARK_unit" };
    yURG_logger   (x_narg, x_args);
    yURG_urgs     (x_narg, x_args);
-   yURG_name  ("kitchen"      , YURG_ON);
-   yURG_name  ("ystr"         , YURG_ON);
-   yURG_name  ("yview"        , YURG_ON);
-   yURG_name  ("ymode"        , YURG_ON);
-   yURG_name  ("ycmd"         , YURG_ON);
-   yURG_name  ("ysrc"         , YURG_ON);
-   yURG_name  ("ymap"         , YURG_ON);
-   yURG_name  ("ykeys"        , YURG_ON);
-   yURG_name  ("ymark"        , YURG_ON);
-   yURG_name  ("ysort"        , YURG_ON);
+   yURG_by_name  ("kitchen"      , YURG_ON);
+   yURG_by_name  ("ystr"         , YURG_ON);
+   yURG_by_name  ("yview"        , YURG_ON);
+   yURG_by_name  ("ymode"        , YURG_ON);
+   yURG_by_name  ("ycmd"         , YURG_ON);
+   yURG_by_name  ("ysrc"         , YURG_ON);
+   yURG_by_name  ("ymap"         , YURG_ON);
+   yURG_by_name  ("ykeys"        , YURG_ON);
+   yURG_by_name  ("ymark"        , YURG_ON);
+   yURG_by_name  ("ysort"        , YURG_ON);
    DEBUG_YMARK  yLOG_info     ("yMARK"     , yMARK_version   ());
    yMODE_init (MODE_MAP);
-   yMODE_handler_setup ();
-   yFILE_init ();
-   yCMD_init  ();
-   yKEYS_init           ();
-   yMAP__unit_wander    ();
-   ySRC_init            ();
-   yMACRO_init          ();
+   yMODE_init_after ();
+   yKEYS_unit_handlers ();
+   yKEYS_init  ();
+   yKEYS_init_after ();
    yMARK_init ();
+   yMARK_init_after ();
    return 0;
 }
 
@@ -63,7 +59,7 @@ char       /*----: stop logging ----------------------------------------------*/
 ymark__unit_end         (void)
 {
    DEBUG_YMARK  yLOG_enter   (__FUNCTION__);
-   yCMD_wrap    ();
+   /*> yCMD_wrap    ();                                                               <*/
    DEBUG_YMARK  yLOG_exit    (__FUNCTION__);
    yLOGS_end    ();
    return 0;

@@ -352,7 +352,7 @@ yMARK_find_hmode        (uchar a_major, uchar a_minor)
       DEBUG_YMARK   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
-   yMAP_jump (x_find->u, x_find->x, x_find->y, x_find->z);
+   yVIHUB_yMAP_jump (x_find->u, x_find->x, x_find->y, x_find->z);
    /*---(complete)-----------------------*/
    DEBUG_YMARK   yLOG_exit    (__FUNCTION__);
    return 0;

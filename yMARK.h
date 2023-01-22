@@ -13,6 +13,7 @@ typedef  unsigned short       ushort;
 /*---(internal)-------------*/
 char*       yMARK_version           (void);
 char        yMARK_init              (void);
+char        yMARK_init_after        (void);
 char        yMARK_wrap              (void);
 /*---(interface)------------*/
 char        yMARK_config            (void *a_regex, void *a_unfind, void *a_hint);

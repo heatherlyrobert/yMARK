@@ -5,6 +5,7 @@
 
 
 tMY         myMARK;
+char        g_print     [LEN_RECD];
 
 
 
@@ -56,6 +57,8 @@ yMARK_init               (void)
       DEBUG_YMARK   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
+   /*---(hook to yVIHUB)-----------------*/
+   yVIHUB_from_yMARK (yMARK_find_hmode, yMARK_execute);
    /*---(terms)--------------------------*/
    DEBUG_YMARK   yLOG_note    ("initialize globals callbacks");
    rc = ymark_srch_init ();
@@ -65,13 +68,29 @@ yMARK_init               (void)
    myMARK.e_hint     = NULL;
    rc = ymark_mark_init ();
    DEBUG_YMARK   yLOG_value   ("mark"      , rc);
-   /*---(other updates)------------------*/
-   /*> rc = yFILE_dump_add ("cmds"      , "", "inventory of commands"       , ycmd_dump          );   <*/
    /*---(update status)------------------*/
    rc = yMODE_init_set   (MODE_SEARCH, NULL, ymark__unit_stub);
    DEBUG_YMARK   yLOG_value   ("mark"      , rc);
    rc = yMODE_init_set   (SMOD_HINT  , NULL, ymark__unit_stub);
    DEBUG_YMARK   yLOG_value   ("hint"      , rc);
+   /*---(complete)-----------------------*/
+   DEBUG_YMARK   yLOG_exit    (__FUNCTION__);
+   return 0;
+}
+
+char
+yMARK_init_after         (void)
+{
+   /*---(locals)-----------+-----+-----+-*/
+   char        rce         =  -10;
+   char        rc          =    0;
+   int         i           =    0;
+   /*---(header)-------------------------*/
+   DEBUG_YMARK   yLOG_enter   (__FUNCTION__);
+   /*---(other updates)------------------*/
+   rc = yVIHUB_yVIEW_switch_add ('s', "mark"   , "", yMARK_mark_status    , "details of visual selection"                );
+   rc = yVIHUB_yCMD_add (YVIHUB_M_EDIT  , "mark"        , ""    , "a"    , ymark_mark_direct          , "" );
+   yMODE_after_set  (MODE_SEARCH);
    /*---(complete)-----------------------*/
    DEBUG_YMARK   yLOG_exit    (__FUNCTION__);
    return 0;

@@ -68,8 +68,6 @@ ymark_mark_init         (void)
    ymark_mark__purge  (YSTR_IFULL);
    /*---(globals)------------------------*/
    s_marking = '-';
-   yCMD_add (YCMD_M_EDIT  , "mark"        , ""    , "a"    , ymark_mark_direct          , "" );
-   yVIEW_switch_add (YVIEW_STATUS, "mark"   , "", yMARK_mark_status    , "details of visual selection"                );
    /*---(update status)------------------*/
    yMODE_init_set   (UMOD_MARK, NULL, ymark_mark_smode);
    /*---(complete)-----------------------*/
@@ -224,7 +222,7 @@ ymark_mark__set               (uchar a_mark)
       return 0;
    }
    /*---(get current)--------------------*/
-   rc = yMAP_current  (x_label, &b, &x, &y, &z);
+   rc = yVIHUB_yMAP_current  (x_label, &b, &x, &y, &z);
    --rce;  if (rc < 0) {
       DEBUG_YMARK   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
@@ -321,7 +319,7 @@ ymark_mark__return      (uchar a_mark)
    }
    /*---(move)---------------------------*/
    DEBUG_YMARK   yLOG_note    ("jump to mark");
-   yMAP_jump (s_mark_info [x_index].u, s_mark_info [x_index].x, s_mark_info [x_index].y, s_mark_info [x_index].z);
+   yVIHUB_yMAP_jump (s_mark_info [x_index].u, s_mark_info [x_index].x, s_mark_info [x_index].y, s_mark_info [x_index].z);
    /*---(set history)--------------------*/
    ymark_mark__history (a_mark);
    /*---(complete)-----------------------*/
@@ -384,7 +382,7 @@ ymark_mark__which       (void)
    int         i           =    0;
    char        x_label     [LEN_LABEL];
    /*---(get current)--------------------*/
-   rc = yMAP_current  (x_label, NULL, NULL, NULL, NULL);
+   rc = yVIHUB_yMAP_current  (x_label, NULL, NULL, NULL, NULL);
    --rce;  if (rc < 0) {
       DEBUG_YMARK   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
@@ -762,7 +760,7 @@ yMARK_mark_reader       (int n, char *a_verb)
    /*---(save)---------------------------*/
    DEBUG_YMARK   yLOG_note    ("saving values");
    strlcpy (s_mark_info [c].label, x_label, LEN_LABEL);
-   rc = yMAP_locator (s_mark_info [c].label, &s_mark_info [c].u, &s_mark_info [c].x, &s_mark_info [c].y, &s_mark_info [c].z);
+   rc = yVIHUB_yMAP_locator (s_mark_info [c].label, &s_mark_info [c].u, &s_mark_info [c].x, &s_mark_info [c].y, &s_mark_info [c].z);
    --rce;  if (rc < 0) {
       ymark_mark__unset   (x_abbr);
       DEBUG_YMARK   yLOG_exitr   (__FUNCTION__, rce);
@@ -854,6 +852,17 @@ ymark_mark_direct       (char *a_string)
          DEBUG_YMARK   yLOG_note    ("unset a mark");
          rc = ymark_mark__unset   (x_src);
          break;
+      case '~' :
+         DEBUG_YMARK   yLOG_note    ("copy to unnammed sreg");
+         x_index = ymark_mark__index (x_src);
+         DEBUG_YMARK   yLOG_value   ("x_index"   , x_index);
+         --rce;  if (x_index < 0) {
+            DEBUG_YMARK   yLOG_exitr   (__FUNCTION__, rce);
+            return rce;
+         }
+         DEBUG_YMARK   yLOG_char    ("a_mark"    , x_src);
+         rc = ySRC_push  ('"', s_mark_info [x_index].label);
+         break;
       default  :
          DEBUG_YMARK   yLOG_note    ("unknown action");
          DEBUG_YMARK   yLOG_exitr   (__FUNCTION__, rce);
@@ -883,6 +892,17 @@ ymark_mark_direct       (char *a_string)
          rc = ymark_mark__copy  (x_src, x_dst);
          rc = ymark_mark__copy  ('¤'  , x_src);
          break;
+      case '~' :
+         DEBUG_YMARK   yLOG_note    ("copy to unnammed sreg");
+         x_index = ymark_mark__index (x_src);
+         DEBUG_YMARK   yLOG_value   ("x_index"   , x_index);
+         --rce;  if (x_index < 0) {
+            DEBUG_YMARK   yLOG_exitr   (__FUNCTION__, rce);
+            return rce;
+         }
+         DEBUG_YMARK   yLOG_char    ("a_mark"    , x_src);
+         rc = ySRC_push  (x_dst, s_mark_info [x_index].label);
+         break;
       default  :
          DEBUG_YMARK   yLOG_note    ("unknown action");
          DEBUG_YMARK   yLOG_exitr   (__FUNCTION__, rce);
@@ -905,17 +925,17 @@ ymark_mark_direct       (char *a_string)
       DEBUG_YMARK   yLOG_char    ("a_mark"    , x_src);
       /*---(save)---------------------------*/
       strlcpy (s_mark_info [x_index].label, a_string + 2, LEN_LABEL);
-      rc = yMAP_locator   (s_mark_info [x_index].label, &s_mark_info [x_index].u, &s_mark_info [x_index].x, &s_mark_info [x_index].y, &s_mark_info [x_index].z);
+      rc = yVIHUB_yMAP_locator   (s_mark_info [x_index].label, &s_mark_info [x_index].u, &s_mark_info [x_index].x, &s_mark_info [x_index].y, &s_mark_info [x_index].z);
       --rce;  if (rc < 0) {
          ymark_mark__unset   (x_src);
          DEBUG_YMARK   yLOG_exitr   (__FUNCTION__, rce);
          return rce;
       }
-      rc = yMAP_addresser (s_mark_info [x_index].label, s_mark_info [x_index].u, s_mark_info [x_index].x, s_mark_info [x_index].y, s_mark_info [x_index].z);
+      rc = yVIHUB_yMAP_addresser (s_mark_info [x_index].label, s_mark_info [x_index].u, s_mark_info [x_index].x, s_mark_info [x_index].y, s_mark_info [x_index].z);
       s_mark_info [x_index].source = MARK_IMPORT;
    }
    /*---(go there)-----------------------*/
-   /*> yMAP_jump (s_mark_info [x_index].u, s_mark_info [x_index].x, s_mark_info [x_index].y, s_mark_info [x_index].z);   <*/
+   /*> yVIHUB_yMAP_jump (s_mark_info [x_index].u, s_mark_info [x_index].x, s_mark_info [x_index].y, s_mark_info [x_index].z);   <*/
    /*---(set history)--------------------*/
    /*> DEBUG_YMARK   yLOG_note    ("set history");                                    <*/
    /*> ymark_mark__history (x_src);                                                   <*/
@@ -1006,7 +1026,7 @@ ymark_mark_smode        (uchar a_major, uchar a_minor)
          break;
       case '_' :
          DEBUG_YMARK   yLOG_note    ("use mark status bar");
-         yCMD_direct (":status mark");
+         yVIHUB_yCMD_direct (":status mark");
          break;
       case '?' :
          DEBUG_YMARK   yLOG_note    ("show mark info window");

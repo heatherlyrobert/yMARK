@@ -36,8 +36,8 @@
 
 #define     P_VERMAJOR  "2.--, clean, improve, and expand"
 #define     P_VERMINOR  "2.0-, separated into independent library"
-#define     P_VERNUM    "2.0d"
-#define     P_VERTXT    "added marks and unit testing for them"
+#define     P_VERNUM    "2.0e"
+#define     P_VERTXT    "updated to yURG_by_name after yURG change"
 
 #define     P_PRIORITY  "direct, simple, brief, vigorous, and lucid (h.w. fowler)"
 #define     P_PRINCIPAL "[grow a set] and build your wings on the way down (r. bradbury)"
@@ -54,14 +54,11 @@
 #include    <yLOG.h>              /* heatherly program logging                */
 #include    <ySTR.h>              /* heatherly string processing              */
 /*---(custom vikeys)---------------------*/
+#include    <yVIHUB.h>
 #include    <yMODE.h>             /* heatherly vi-keys mode processing        */
 #include    <yKEYS.h>             /* heatherly vi-keys mode processing        */
-#include    <yFILE.h>             /* heatherly vi-keys content file handling  */
-#include    <yMAP.h>              /* heatherly vi-keys location management    */
-#include    <yMACRO.h>            /* heatherly vi-keys macro processing       */
-#include    <yCMD.h>
+
 #include    <ySRC.h>              /* heatherly vi-keys source editing         */
-#include    <yVIEW.h>             /* heatherly vi-keys view management        */
 /*---(custom other)----------------------*/
 #include    <yPARSE.h>            /* heatherly file reading and writing       */
 #include    <yDLST_solo.h>
