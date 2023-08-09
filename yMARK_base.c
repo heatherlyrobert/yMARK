@@ -69,8 +69,8 @@ yMARK_init               (void)
    rc = ymark_mark_init ();
    DEBUG_YMARK   yLOG_value   ("mark"      , rc);
    /*---(update status)------------------*/
-   rc = yMODE_init_set   (MODE_SEARCH, NULL, ymark__unit_stub);
-   DEBUG_YMARK   yLOG_value   ("mark"      , rc);
+   /*> rc = yMODE_init_set   (MODE_SEARCH, NULL, ymark__unit_stub);                   <*/
+   /*> DEBUG_YMARK   yLOG_value   ("mark"      , rc);                                 <*/
    rc = yMODE_init_set   (SMOD_HINT  , NULL, ymark__unit_stub);
    DEBUG_YMARK   yLOG_value   ("hint"      , rc);
    /*---(complete)-----------------------*/
