@@ -90,6 +90,7 @@ yMARK_init_after         (void)
    /*---(other updates)------------------*/
    rc = yVIHUB_yVIEW_switch_add ('s', "mark"   , "", yMARK_mark_status    , "details of visual selection"                );
    rc = yVIHUB_yCMD_add (YVIHUB_M_EDIT  , "mark"        , ""    , "a"    , ymark_mark_direct          , "" );
+   rc = yVIHUB_yVIEW_switch_add ('s', "find"  , "" , yMARK_find_status    , "list of current search finds"               );
    yMODE_after_set  (MODE_SEARCH);
    /*---(complete)-----------------------*/
    DEBUG_YMARK   yLOG_exit    (__FUNCTION__);

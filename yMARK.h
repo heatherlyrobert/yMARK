@@ -32,5 +32,8 @@ char        yMARK_mark_writer_all   (void);
 char        yMARK_mark_reader       (int n, char *a_verb);
 char        yMARK_mark_status       (char a_size, short a_wide, char *a_list);
 
+char        yMARK_find_status       (char a_size, short a_wide, char *a_list);
+
+
 #endif
 /*============================----end-of-source---============================*/
