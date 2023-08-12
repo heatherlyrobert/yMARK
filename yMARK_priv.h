@@ -1,49 +1,61 @@
-/*============================----beg-of-source---============================*/
+/*===============================[[ beg code ]]===============================*/
 #ifndef yMARK_priv
 #define yMARK_priv yes
 
 
-
-/*===[[ BEG_HEADER ]]=========================================================*/
-/*345678901-12345678901-12345678901-12345678901-12345678901-12345678901-12345678901-12345678901-*/
-
-/*===[[ ONE_LINERS ]]=========================================================*/
-
+/*===[[ HEADER BEG ]]=========================================================*/
+/*                      ´·········1·········2·········3·········4·········5·········6·········7*/
+/*--------- 12345678901 ´123456789-123456789-123456789-123456789-123456789-123456789-123456789-*/
+/*········· ··········· ´·····························´········································*/
+#define     P_NAME      "yMARK"
+/*········· ··········· ´·····························´········································*/
 #define     P_FOCUS     "RS (run-time support)"
 #define     P_NICHE     "us (user control)"
 #define     P_SUBJECT   "vikeys searching and marking"
 #define     P_PURPOSE   ""
-
+/*········· ··········· ´·····························´········································*/
 #define     P_NAMESAKE  "ponos-daimon (hard labor and toil)"
+#define     P_PRONOUNCE ""
 #define     P_HERITAGE  ""
+#define     P_BRIEFLY   ""
 #define     P_IMAGERY   ""
 #define     P_REASON    ""
-
+/*········· ··········· ´·····························´········································*/
 #define     P_ONELINE   P_NAMESAKE " " P_SUBJECT
-
+/*········· ··········· ´·····························´········································*/
+#define     P_HOMEDIR   "/home/system/yMARK.vikeys_searching_and_marking"
 #define     P_BASENAME  "yMARK"
 #define     P_FULLNAME  "/usr/local/lib64/libyMARK"
-#define     P_SUFFIX    ""
-#define     P_CONTENT   ""
-
+#define     P_SUFFIX    "n/a"
+#define     P_CONTENT   "n/a"
+/*········· ··········· ´·····························´········································*/
 #define     P_SYSTEM    "gnu/linux   (powerful, ubiquitous, technical, and hackable)"
 #define     P_LANGUAGE  "ansi-c      (wicked, limitless, universal, and everlasting)"
+#define     P_COMPILER  "gcc 11.3.0"
 #define     P_CODESIZE  "large       (appoximately 10,000 slocl)"
-#define     P_DEPENDS   "none"
-
+/*········· ··········· ´·····························´········································*/
+#define     P_DEPSTDC   "stdio,stdlib,string"
+#define     P_DEPPOSIX  ""
+#define     P_DEPCORE   "yURG,yLOG,ySTR"
+#define     P_DEPVIKEYS "yVIHUB,yMODE,yKEYS,ySRC"
+#define     P_DEPOTHER  "yPARSE,ySORT"
+#define     P_DEPGRAPH  ""
+#define     P_DEPHEAD   "yDLST_solo"
+/*········· ··········· ´·····························´········································*/
 #define     P_AUTHOR    "heatherlyrobert"
 #define     P_CREATED   ""
-
+/*········· ··········· ´·····························´········································*/
 #define     P_VERMAJOR  "2.--, clean, improve, and expand"
 #define     P_VERMINOR  "2.0-, separated into independent library"
-#define     P_VERNUM    "2.0g"
-#define     P_VERTXT    "finds sort correctly now, and find status available"
-
+#define     P_VERNUM    "2.0h"
+#define     P_VERTXT    "updating marks.  now can visibly show in qyges again."
+/*········· ··········· ´·····························´········································*/
 #define     P_PRIORITY  "direct, simple, brief, vigorous, and lucid (h.w. fowler)"
 #define     P_PRINCIPAL "[grow a set] and build your wings on the way down (r. bradbury)"
 #define     P_REMINDER  "there are many better options, but i *own* every byte of this one"
-
-/*===[[ END_HEADER ]]=========================================================*/
+/*········· ··········· ´·····························´········································*/
+/*--------- 12345678901 ´123456789-123456789-123456789-123456789-123456789-123456789-123456789-*/
+/*                      ´·········1·········2·········3·········4·········5·········6·········7*/
 
 /*---(ansi-c standard)-------------------*/
 #include    <stdio.h>             /* clibc  standard input/output             */
@@ -57,12 +69,11 @@
 #include    <yVIHUB.h>
 #include    <yMODE.h>             /* heatherly vi-keys mode processing        */
 #include    <yKEYS.h>             /* heatherly vi-keys mode processing        */
-
 #include    <ySRC.h>              /* heatherly vi-keys source editing         */
 /*---(custom other)----------------------*/
 #include    <yPARSE.h>            /* heatherly file reading and writing       */
-#include    <yDLST_solo.h>
 #include    <ySORT.h>             /* heatherly sorting and searching          */
+#include    <yDLST_solo.h>
 
 
 
@@ -205,7 +216,7 @@ char        ymark_mark__range       (void);
 char        ymark_mark__prev        (void);
 char        ymark_mark__next        (void);
 /*---(status)---------------*/
-char*       ymark_mark__data        (uchar a_mark);
+char*       yMARK_mark__data        (uchar a_mark);
 char        ymark_mark_info         (char *a_entry, int a_index);
 char        ymark_mark_status       (char *a_status);
 char        yMARK_marking           (char *a_label);

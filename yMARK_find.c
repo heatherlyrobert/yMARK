@@ -21,8 +21,8 @@ ymark_to_sort           (char a_label [LEN_LABEL], char r_sort [LEN_TITLE])
    --rce;  if (a_label == NULL)  return rce;
    --rce;  if (r_sort  == NULL)  return rce;
    rc = str2gyges (a_label, &u, &x, &y, NULL, NULL, 0, YSTR_ADAPT);
-   --rce;  if (rc < 0)           return rce;
-   sprintf (x_sort, "%2d·%3d·%4d %s", u, x, y, a_label);
+   if (rc < 0)   strlcpy (x_sort, a_label, LEN_TITLE);
+   else          sprintf (x_sort, "%2d·%3d·%4d %s", u, x, y, a_label);
    strlcpy (r_sort, x_sort, LEN_TITLE);
    return 0;
 }
@@ -42,6 +42,7 @@ ymark_find_new          (uchar *a_label, char a_force, tFIND **r_new)
    char        rc          =    0;
    tFIND      *x_new       = NULL;
    int         x_tries     =    0;
+   char        x_sort      [LEN_LABEL] = "";
    /*---(header)-------------------------*/
    DEBUG_YMARK   yLOG_enter   (__FUNCTION__);
    /*---(check return)-------------------*/
@@ -86,10 +87,24 @@ ymark_find_new          (uchar *a_label, char a_force, tFIND **r_new)
       DEBUG_YMARK   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
-   /*---(wipe)---------------------------*/
+   /*---(populate)-----------------------*/
    strlcpy (x_new->label, a_label, LEN_LABEL);
    x_new->u = x_new->x = x_new->y = x_new->z = 0;
    x_new->c = 1;
+   ymark_to_sort (x_new->label, x_new->sort);
+   /*---(into btree)---------------------*/
+   rc = ySORT_hook (B_FIND, x_new, x_new->sort, &x_new->btree);
+   DEBUG_YMARK   yLOG_value   ("btree"     , rc);
+   --rce;  if (rc < 0) {
+      DEBUG_YMARK   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
+   /*---(update)-------------------------*/
+   rc = ySORT_prepare (B_FIND);
+   if (rc < 0) {
+      DEBUG_YMARK   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+   }
    /*---(save return)--------------------*/
    *r_new = x_new;
    /*---(complete)-----------------------*/
@@ -246,7 +261,7 @@ char ymark_find_by_cursor     (uchar a_dir, tFIND **r_find)   { return ySORT_by_
 char
 ymark_find_by_label      (uchar *a_name, tFIND **r_find) 
 {
-   char        x_sort      [LEN_LABEL] = "";
+   char        x_sort      [LEN_TITLE] = "";
    ymark_to_sort (a_name, x_sort);
    return ySORT_by_name   (B_FIND, x_sort, r_find);
 }
@@ -287,14 +302,18 @@ yMARK_find_status       (char a_size, short a_wide, char *a_list)
    char        x_on        =  '·';
    char        x_list      [LEN_RECD]  = "";
    int         c           =    0;
+   tFIND      *x_curr      = NULL;
+   char        x_label     [LEN_LABEL] = "·";
    /*---(defenses)-----------------------*/
    --rce;  if (a_list  == NULL)  return rce;
+   /*---(get current)--------------------*/
+   ymark_find_by_cursor (YDLST_CURR, &x_curr);
+   if (x_curr != NULL)  strlcpy (x_label, x_curr->label, LEN_LABEL);
    /*---(status)-------------------------*/
    c = ymark_find_count ();
    if (c > 0) x_on = 'y';
    strlcpy (x_list, ymark_find_list (), LEN_RECD);
-   if (c > 0)  --c;
-   snprintf (a_list, 200, "finds    %c  %4d  %s", x_on, c, x_list);
+   snprintf (a_list, 200, "finds    %c  %-8.8s  %4d  %s", x_on, x_label, c, x_list);
    /*---(complete)-----------------------*/
    return 0;
 }
@@ -313,7 +332,7 @@ yMARK_found             (uchar *a_label, ushort u, ushort x, ushort y, ushort z)
    char        rce         =  -10;
    char        rc          =    0;
    tFIND      *x_curr      = NULL;
-   char        x_sort      [LEN_LABEL];
+   char        x_sort      [LEN_TITLE];
    /*---(header)-------------------------*/
    DEBUG_YMARK   yLOG_enter   (__FUNCTION__);
    /*---(allocate)-----------------------*/
@@ -324,25 +343,10 @@ yMARK_found             (uchar *a_label, ushort u, ushort x, ushort y, ushort z)
       return rce;
    }
    /*---(populate)-----------------------*/
-   DEBUG_YMARK   yLOG_note    ("populate");
-   x_curr->u       = u;
-   x_curr->x       = x;
-   x_curr->y       = y;
-   x_curr->z       = z;
-   sprintf (x_curr->sort, "%2d·%3d·%4d %s", x_curr->u, x_curr->x, x_curr->y, x_curr->label);
-   /*---(into btree)---------------------*/
-   rc = ySORT_hook (B_FIND, x_curr, x_curr->sort, &x_curr->btree);
-   DEBUG_YMARK   yLOG_value   ("btree"     , rc);
-   --rce;  if (rc < 0) {
-      DEBUG_YMARK   yLOG_exitr   (__FUNCTION__, rce);
-      return rce;
-   }
-   /*---(update)-------------------------*/
-   rc = ySORT_prepare (B_FIND);
-   if (rc < 0) {
-      DEBUG_YMARK   yLOG_exitr   (__FUNCTION__, rce);
-      return rce;
-   }
+   x_curr->u = u;
+   x_curr->x = x;
+   x_curr->y = y;
+   x_curr->z = z;
    /*---(complete)-----------------------*/
    DEBUG_YMARK   yLOG_exit    (__FUNCTION__);
    return 0;

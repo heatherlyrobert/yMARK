@@ -542,7 +542,7 @@ ymark_mark__next        (void)
 static void  o___STATUS__________o () { return; }
 
 char*        /*-> tbd --------------------------------[ ------ [ge.420.132.11]*/ /*-[00.0000.114.!]-*/ /*-[--.---.---.--]-*/
-ymark_mark__data        (uchar a_mark)
+yMARK_mark__data        (uchar a_mark)
 {
    /*---(locals)-----------+-----+-----+-*/
    int         n           =    0;
@@ -658,6 +658,13 @@ ymark_mark_listplus     (char *a_list)
    if (strcmp (a_list, ",") == 0)   strcpy (a_list, ".");
    /*---(complete)-----------------------*/
    return 0;
+}
+
+char
+yMARK_mark_list    (char *a_show, char *a_list)
+{
+   if (a_show != NULL)  *a_show = s_marking;
+   return ymark_mark_marklist (a_list);
 }
 
 
