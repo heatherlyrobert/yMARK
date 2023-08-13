@@ -91,6 +91,7 @@ yMARK_init_after         (void)
    rc = yVIHUB_yVIEW_switch_add ('s', "mark"   , "", yMARK_mark_status    , "details of visual selection"                );
    rc = yVIHUB_yCMD_add (YVIHUB_M_EDIT  , "mark"        , ""    , "a"    , ymark_mark_direct          , "" );
    rc = yVIHUB_yVIEW_switch_add ('s', "find"  , "" , yMARK_find_status    , "list of current search finds"               );
+   rc = yPARSE_handler_max (UMOD_MARK    , "loc_mark"  , 7.1, "cL----------", -1, yMARK_mark_reader , yMARK_mark_writer_all  , "------------" , "a,label", "vikeys location marks"    );
    yMODE_after_set  (MODE_SEARCH);
    /*---(complete)-----------------------*/
    DEBUG_YMARK   yLOG_exit    (__FUNCTION__);

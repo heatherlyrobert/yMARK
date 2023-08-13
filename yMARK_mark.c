@@ -69,6 +69,7 @@ ymark_mark_init         (void)
    /*---(globals)------------------------*/
    s_marking = '-';
    /*---(update status)------------------*/
+   yVIHUB_yFILE_dump_add    ("mark", "", "dump of all location marks", ymark_mark_dump);
    yMODE_init_set   (UMOD_MARK, NULL, ymark_mark_smode);
    /*---(complete)-----------------------*/
    DEBUG_YMARK   yLOG_exit    (__FUNCTION__);
@@ -626,7 +627,8 @@ ymark_mark_marklist     (char *a_list)
    strncpy (a_list, "-", LEN_RECD);   /* special for a null list */
    /*---(walk the list)------------------*/
    strncpy (a_list, ",", LEN_RECD);
-   for (i = 0; i < s_nmark; ++i) {
+   for (i = 1; i < s_nmark; ++i) {
+      if (S_MARK_LIST [i] == (uchar) '¤')  break;
       if (s_mark_info [i].source == MARK_NONE) continue;
       sprintf    (x_entry, "%s,", s_mark_info [i].label);
       strncat    (a_list, x_entry, LEN_RECD);
@@ -650,6 +652,7 @@ ymark_mark_listplus     (char *a_list)
    /*---(walk the list)------------------*/
    strncpy (a_list, ",", LEN_RECD);
    for (i = 1; i < s_nmark; ++i) {
+      if (S_MARK_LIST [i] == (uchar) '¤')  break;
       if (s_mark_info [i].source == MARK_NONE) continue;
       sprintf    (x_entry, "%c:%s,", S_MARK_LIST [i], s_mark_info [i].label);
       strncat    (a_list, x_entry, LEN_RECD);
@@ -664,7 +667,7 @@ char
 yMARK_mark_list    (char *a_show, char *a_list)
 {
    if (a_show != NULL)  *a_show = s_marking;
-   return ymark_mark_marklist (a_list);
+   return ymark_mark_listplus (a_list);
 }
 
 
@@ -689,13 +692,13 @@ ymark_mark_writer       (int c, uchar a_abbr)
    /*---(defense)------------------------*/
    DEBUG_YMARK   yLOG_char    ("a_abbr"    , a_abbr);
    n  = ymark_mark__index (a_abbr);
-   DEBUG_YMARK   yLOG_char    ("index"     , n);
+   DEBUG_YMARK   yLOG_value   ("index"     , n);
    --rce; if (n  < 0) { 
       DEBUG_YMARK   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
    /*---(label)--------------------------*/
-   DEBUG_YMARK   yLOG_char    ("label"     , s_mark_info [n].label);
+   DEBUG_YMARK   yLOG_info    ("label"     , s_mark_info [n].label);
    if (strcmp (s_mark_info [n].label, "-") == 0) {
       DEBUG_YMARK   yLOG_exit    (__FUNCTION__);
       return 0;
@@ -720,7 +723,7 @@ yMARK_mark_writer_all   (void)
    x_end = strlen (S_MARK_LIST);
    /*> yPARSE_verb_begin ("loc_mark");                                                <*/
    /*---(walk list)----------------------*/
-   for (i = 0; i <= x_end; ++i) {
+   for (i = 1; i <= x_end; ++i) {
       rc = ymark_mark_writer   (c, S_MARK_LIST [i]);
       if (rc < 1)  continue;
       ++c;
@@ -781,12 +784,94 @@ yMARK_mark_reader       (int n, char *a_verb)
    return 1;
 }
 
+char
+ymark_mark_dump         (void *f)
+{
+   /*---(locals)-----------+-----+-----+-*/
+   int         i           =    0;
+   char        x_line      [LEN_FULL]  = "";
+   char        x_mark      =  '·';
+   /*---(header)-------------------------*/
+   DEBUG_OUTP   yLOG_enter   (__FUNCTION__);
+   /*---(walk list)----------------------*/
+   for (i = 0; i < S_MARK_MAX; ++i) {
+      x_mark = S_MARK_LIST [i];
+      if (x_mark == '\0')  break;
+      if (strchr ("'aAfFkKpPuU05èîôú", x_mark) != NULL)  fprintf (f, "\n");
+      if (strchr ("'aA0è"            , x_mark) != NULL)  fprintf (f, "#  --label--  u-  -x-  -y--  -z--  s\n");
+      fprintf (f, "%c  %-9.9s  %2d  %3d  %4d  %4d  %c\n", x_mark, s_mark_info [i].label, s_mark_info [i].u, s_mark_info [i].x, s_mark_info [i].y, s_mark_info [i].z, s_mark_info [i].source);
+   }
+   fprintf (f, "\n");
+   /*---(complete)-----------------------*/
+   DEBUG_OUTP  yLOG_exit    (__FUNCTION__);
+   return 0;
+}
+
 
 
 /*====================------------------------------------====================*/
 /*===----                      mark command line                       ----===*/
 /*====================------------------------------------====================*/
 static void  o___COMMAND_________o () { return; }
+
+char
+ymark_mark__1char       (char a_from, char a_char)
+{
+   /*---(locals)-----------+-----+-----+-*/
+   char        rce         =  -10;
+   char        rc          =    0;
+   /*---(header)-------------------------*/
+   DEBUG_YMARK   yLOG_enter   (__FUNCTION__);
+   DEBUG_YMARK   yLOG_note    ("one character option");
+   switch (a_char) {
+   case '#' :
+      if (a_from == 's') {
+         DEBUG_YMARK   yLOG_note    ("unset mark under cursor");
+         rc = ymark_mark__which   ();
+         if (rc < 0) {
+            DEBUG_YMARK   yLOG_exitr   (__FUNCTION__, rce);
+            return rce;
+         }
+         ymark_mark__unset   (rc);
+         break;
+      } else {
+         DEBUG_YMARK   yLOG_note    ("purging all marks");
+         ymark_mark__purge (YSTR_IFULL);
+      }
+      break;
+   case '!' :
+      DEBUG_YMARK   yLOG_note    ("turn marks visible");
+      s_marking = 'y';
+      break;
+   case '%' :
+      DEBUG_YMARK   yLOG_note    ("turn marks hidden");
+      s_marking = '-';
+      break;
+   case '&' :
+      DEBUG_YMARK   yLOG_note    ("turn marks visible, noted, and also status bar");
+      s_marking = 'Y';
+      yVIHUB_yCMD_direct (":status mark");
+      break;
+   case '_' :
+      DEBUG_YMARK   yLOG_note    ("use mark status bar");
+      yVIHUB_yCMD_direct (":status mark");
+      break;
+   case '?' :
+      DEBUG_YMARK   yLOG_note    ("show mark info window");
+      /*> myVIKEYS.info_win = 'y';                                                    <*/
+      /*> DEBUG_YMARK   yLOG_exit    (__FUNCTION__);                               <*/
+      /*> return a_major;                                                          <*/
+      break;
+   default  :
+      DEBUG_YMARK   yLOG_note    ("unknown action");
+      DEBUG_YMARK   yLOG_exitr   (__FUNCTION__, rce);
+      return rce;
+      break;
+   }
+   /*---(complete)-----------------------*/
+   DEBUG_YMARK   yLOG_exit    (__FUNCTION__);
+   return 0;
+}
 
 char         /*-> enter a mark directly --------------[ ------ [ge.D54.139.83]*/ /*-[02.0000.00#.O]-*/ /*-[--.---.---.--]-*/
 ymark_mark_direct       (char *a_string)
@@ -827,27 +912,33 @@ ymark_mark_direct       (char *a_string)
    x_dst = a_string [2];
    /*---(check for singles)--------------*/
    --rce;  if (x_len == 1) {
-      DEBUG_YMARK   yLOG_note    ("one character option");
-      switch (x_src) {
-      case '_' :
-         DEBUG_YMARK   yLOG_note    ("show status");
-         break;
-      case '!' :
-         DEBUG_YMARK   yLOG_note    ("display marks");
-         break;
-      case '%' :
-         DEBUG_YMARK   yLOG_note    ("hide marks");
-         break;
-      case '?' :
-         DEBUG_YMARK   yLOG_note    ("information window");
-         break;
-      default  :
-         DEBUG_YMARK   yLOG_note    ("unknown action");
-         DEBUG_YMARK   yLOG_exitr   (__FUNCTION__, rce);
-         return rce;
-         break;
-      }
-      DEBUG_YMARK   yLOG_value   ("rc"        , rc);
+      /*> DEBUG_YMARK   yLOG_note    ("one character option");                        <*/
+      rc = ymark_mark__1char       ('d', x_src);
+      DEBUG_YMARK   yLOG_value   ("1char"     , rc);
+      /*> switch (x_src) {                                                                    <* 
+       *> case '!' :                                                                          <* 
+       *>    DEBUG_YMARK   yLOG_note    ("turn marks visible");                               <* 
+       *>    s_marking = 'y';                                                                 <* 
+       *>    break;                                                                           <* 
+       *> case '%' :                                                                          <* 
+       *>    DEBUG_YMARK   yLOG_note    ("turn marks hidden");                                <* 
+       *>    s_marking = '-';                                                                 <* 
+       *>    break;                                                                           <* 
+       *> case '&' :                                                                          <* 
+       *>    DEBUG_YMARK   yLOG_note    ("turn marks visible, noted, and also status bar");   <* 
+       *>    s_marking = 'Y';                                                                 <* 
+       *>    yVIHUB_yCMD_direct (":status mark");                                             <* 
+       *>    break;                                                                           <* 
+       *> case '_' :                                                                          <* 
+       *>    DEBUG_YMARK   yLOG_note    ("use mark status bar");                              <* 
+       *>    yVIHUB_yCMD_direct (":status mark");                                             <* 
+       *>    break;                                                                           <* 
+       *> default  :                                                                          <* 
+       *>    DEBUG_YMARK   yLOG_note    ("unknown action");                                   <* 
+       *>    DEBUG_YMARK   yLOG_exitr   (__FUNCTION__, rce);                                  <* 
+       *>    return rce;                                                                      <* 
+       *>    break;                                                                           <* 
+       *> }                                                                                   <*/
       DEBUG_YMARK   yLOG_exit    (__FUNCTION__);
       return rc;
    }
@@ -855,12 +946,12 @@ ymark_mark_direct       (char *a_string)
    --rce;  if (x_len == 2) {
       DEBUG_YMARK   yLOG_note    ("two character option");
       switch (x_div) {
-      case 'x' : case 'd' : case '=' :
+      case 'x' : case 'd' : case '=' : case '#' :
          DEBUG_YMARK   yLOG_note    ("unset a mark");
          rc = ymark_mark__unset   (x_src);
          break;
       case '~' :
-         DEBUG_YMARK   yLOG_note    ("copy to unnammed sreg");
+         DEBUG_YMARK   yLOG_note    ("copy to unnamed sreg");
          x_index = ymark_mark__index (x_src);
          DEBUG_YMARK   yLOG_value   ("x_index"   , x_index);
          --rce;  if (x_index < 0) {
@@ -900,7 +991,7 @@ ymark_mark_direct       (char *a_string)
          rc = ymark_mark__copy  ('¤'  , x_src);
          break;
       case '~' :
-         DEBUG_YMARK   yLOG_note    ("copy to unnammed sreg");
+         DEBUG_YMARK   yLOG_note    ("copy to named sreg");
          x_index = ymark_mark__index (x_src);
          DEBUG_YMARK   yLOG_value   ("x_index"   , x_index);
          --rce;  if (x_index < 0) {
@@ -1011,40 +1102,47 @@ ymark_mark_smode        (uchar a_major, uchar a_minor)
       return 0;
    }
    /*---(common quick)-------------------*/
-   --rce;  if (strchr("_!%#+-?", a_minor) != NULL) {
-      switch (a_minor) {
-      case '#' :
-         DEBUG_YMARK   yLOG_note    ("unset mark under cursor");
-         rc = ymark_mark__which   ();
-         if (rc < 0) {
-            yMODE_exit ();
-            DEBUG_YMARK   yLOG_exitr   (__FUNCTION__, rce);
-            return rce;
-         }
-         ymark_mark__unset   (rc);
-         break;
-      case '!' :
-         DEBUG_YMARK   yLOG_note    ("turn marks visible");
-         s_marking = 'y';
-         break;
-      case '%' :
-         DEBUG_YMARK   yLOG_note    ("turn marks hidden");
-         s_marking = '-';
-         break;
-      case '_' :
-         DEBUG_YMARK   yLOG_note    ("use mark status bar");
-         yVIHUB_yCMD_direct (":status mark");
-         break;
-      case '?' :
-         DEBUG_YMARK   yLOG_note    ("show mark info window");
-         /*> myVIKEYS.info_win = 'y';                                                    <*/
-         /*> DEBUG_YMARK   yLOG_exit    (__FUNCTION__);                               <*/
-         /*> return a_major;                                                          <*/
-         break;
-      }
+   --rce;  if (strchr("_!%&#+-?", a_minor) != NULL) {
+      rc = ymark_mark__1char       ('s', a_minor);
+      /*> DEBUG_YMARK   yLOG_value   ("1char"     , rc);                              <*/
+      /*> switch (a_minor) {                                                                       <* 
+       *> case '#' :                                                                               <* 
+       *>    DEBUG_YMARK   yLOG_note    ("unset mark under cursor");                               <* 
+       *>    rc = ymark_mark__which   ();                                                          <* 
+       *>    if (rc < 0) {                                                                         <* 
+       *>       yMODE_exit ();                                                                     <* 
+       *>       DEBUG_YMARK   yLOG_exitr   (__FUNCTION__, rce);                                    <* 
+       *>       return rce;                                                                        <* 
+       *>    }                                                                                     <* 
+       *>    ymark_mark__unset   (rc);                                                             <* 
+       *>    break;                                                                                <* 
+       *> case '!' :                                                                               <* 
+       *>    DEBUG_YMARK   yLOG_note    ("turn marks visible");                                    <* 
+       *>    s_marking = 'y';                                                                      <* 
+       *>    break;                                                                                <* 
+       *> case '%' :                                                                               <* 
+       *>    DEBUG_YMARK   yLOG_note    ("turn marks hidden");                                     <* 
+       *>    s_marking = '-';                                                                      <* 
+       *>    break;                                                                                <* 
+       *> case '&' :                                                                               <* 
+       *>    DEBUG_YMARK   yLOG_note    ("turn marks visible, noted, and also status bar");        <* 
+       *>    s_marking = 'Y';                                                                      <* 
+       *>    yVIHUB_yCMD_direct (":status mark");                                                  <* 
+       *>    break;                                                                                <* 
+       *> case '_' :                                                                               <* 
+       *>    DEBUG_YMARK   yLOG_note    ("use mark status bar");                                   <* 
+       *>    yVIHUB_yCMD_direct (":status mark");                                                  <* 
+       *>    break;                                                                                <* 
+       *> case '?' :                                                                               <* 
+       *>    DEBUG_YMARK   yLOG_note    ("show mark info window");                                 <* 
+       *>    /+> myVIKEYS.info_win = 'y';                                                    <+/   <* 
+       *>    /+> DEBUG_YMARK   yLOG_exit    (__FUNCTION__);                               <+/      <* 
+       *>    /+> return a_major;                                                          <+/      <* 
+       *>    break;                                                                                <* 
+       *> }                                                                                        <*/
       yMODE_exit ();
       DEBUG_YMARK   yLOG_exit    (__FUNCTION__);
-      return  0;
+      return rc;
    }
    /*---(check for setting)--------------*/
    --rce;  if (a_major == 'm') {
