@@ -10,7 +10,7 @@ LIB_STD    =
 # all heatherly libraries used, debug versions whenever available
 LIB_CORE   = -lyLOG_debug   -lyURG_debug   -lySTR_debug
 LIB_VIKEYS = -lyMODE_debug  -lyKEYS_debug  -lySRC_debug
-LIB_OTHER  = -lyPARSE_debug -lySORT_debug
+LIB_OTHER  = -lyPARSE_debug -lyREGEX_debug -lySORT_debug
 LIB_GRAPH  = -lyVIHUB_debug
 LIB_MINE   = $(LIB_CORE)   $(LIB_VIKEYS)   $(LIB_OTHER)   $(LIB_GRAPH) 
 # directory for production code, no trailing slash

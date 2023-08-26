@@ -47,8 +47,8 @@
 /*········· ··········· ´·····························´········································*/
 #define     P_VERMAJOR  "2.--, clean, improve, and expand"
 #define     P_VERMINOR  "2.0-, separated into independent library"
-#define     P_VERNUM    "2.0i"
-#define     P_VERTXT    "small issue with using mark delete and purge.  fixed"
+#define     P_VERNUM    "2.0j"
+#define     P_VERTXT    "demo updates"
 /*········· ··········· ´·····························´········································*/
 #define     P_PRIORITY  "direct, simple, brief, vigorous, and lucid (h.w. fowler)"
 #define     P_PRINCIPAL "[grow a set] and build your wings on the way down (r. bradbury)"
@@ -72,6 +72,7 @@
 #include    <ySRC.h>              /* heatherly vi-keys source editing         */
 /*---(custom other)----------------------*/
 #include    <yPARSE.h>            /* heatherly file reading and writing       */
+#include    <yREGEX.h>       /* CUSTOM : heatherly regular expressions        */
 #include    <ySORT.h>             /* heatherly sorting and searching          */
 #include    <yDLST_solo.h>
 
@@ -118,7 +119,7 @@ struct cFIND {
 
 typedef    struct    cMY    tMY;
 struct cMY {
-   char      (*e_regex)      (uchar a_not, uchar *a_search);
+   char      (*e_regex)      (char a_scope);
    char      (*e_unfind)     (uchar *a_label, ushort u, ushort x, ushort y, ushort z);
    char      (*e_hint)       (uchar *a_hint);
 };
@@ -135,7 +136,8 @@ char        ymark__unit_quiet       (void);
 char        ymark__unit_loud        (void);
 char        ymark__unit_end         (void);
 char        ymark__unit_stub        (void);
-char        ymark__unit_regex       (uchar a_not, uchar *a_search);
+char        ymark__unit_regex       (char a_scope);
+char        ymark__unit_regex_OLD   (uchar a_not, uchar *a_search);
 char        ymark__unit_unfind      (ushort u, ushort x, ushort y, ushort z);
 char*       yMARK__unit             (char *a_question, int n);
 
@@ -143,11 +145,11 @@ char*       yMARK__unit             (char *a_question, int n);
 /*··········>·······················>·········································*/
 /*---(program)--------------*/
 char        ymark_srch_init         (void);
-char        ymark_srch_purge        (void);
+/*> char        ymark_srch_purge        (void);                                       <*/
 char        ymark_srch_wrap         (void);
 /*---(memory)---------------*/
-char        ymark_srch_new          (uchar *a_label, char a_force, tSRCH **r_new);
-char        ymark_srch_free         (tSRCH **r_old);
+/*> char        ymark_srch_new          (uchar *a_label, char a_force, tSRCH **r_new);   <*/
+/*> char        ymark_srch_free         (tSRCH **r_old);                              <*/
 /*---(search)---------------*/
 int         ymark_srch_count        (void);
 char        ymark_srch_by_name      (uchar *a_name, tSRCH **r_srch);
@@ -160,15 +162,19 @@ char*       ymark_srch_entry        (int n);
 char*       ymark_srch_marked       (uchar a_abbr);
 char*       ymark_srch_marks        (void);
 /*---(execute)--------------*/
+char        ymark_srch__prepare     (char b_search [LEN_RECD], char *r_type, char *r_join, char *r_not, char *r_hist, char *r_comp, double *r_exp);
+char        ymark_srch__run         (char a_search [LEN_RECD], char a_scope, char a_type, char a_join);
+char        yMARK_check             (char a_label [LEN_LABEL], short u, short x, short y, short z, char a_ctype, char a_source [LEN_RECD], char a_string [LEN_RECD], double a_act, char a_print [LEN_RECD]);
+char        ymark_srch__prune       (char a_join);
 char        yMARK_execute           (uchar *a_search);
 /*---(moves)----------------*/
-char        ymark_srch_index        (uchar a_abbr);
-char        ymark_srch_mark         (uchar a_abbr);
-char        ymark_srch_unmark       (uchar a_abbr);
-char        ymark_srch_export       (uchar a_abbr);
-char        ymark_srch_import       (uchar a_abbr);
-char        ymark_srch_copy         (uchar a_src, uchar a_dst);
-char        ymark_srch_full         (uchar a_abbr, uchar *a_text);;
+/*> char        ymark_srch_index        (uchar a_abbr);                               <*/
+/*> char        ymark_srch_mark         (uchar a_abbr);                               <*/
+/*> char        ymark_srch_unmark       (uchar a_abbr);                               <*/
+/*> char        ymark_srch_export       (uchar a_abbr);                               <*/
+/*> char        ymark_srch_import       (uchar a_abbr);                               <*/
+/*> char        ymark_srch_copy         (uchar a_src, uchar a_dst);                   <*/
+/*> char        ymark_srch_full         (uchar a_abbr, uchar *a_text);;               <*/
 char        yMARK_srch_direct       (uchar *a_string);
 /*---(done)-----------------*/
 

@@ -2,6 +2,7 @@
 #ifndef yMARK
 #define yMARK yes
 
+#include   <ySTR_solo.h>
 
 typedef  unsigned char        uchar;
 typedef  unsigned short       ushort;
@@ -18,6 +19,7 @@ char        yMARK_wrap              (void);
 /*---(interface)------------*/
 char        yMARK_config            (void *a_regex, void *a_unfind, void *a_hint);
 char        yMARK_search            (uchar *a_search);
+char        yMARK_check             (char a_label [LEN_LABEL], short u, short x, short y, short z, char a_ctype, char a_source [LEN_RECD], char a_string [LEN_RECD], double a_act, char a_print [LEN_RECD]);
 char        yMARK_found             (uchar *a_label, ushort u, ushort x, ushort y, ushort z);
 char        yMARK_lost              (uchar *a_label);
 char        yMARK_execute           (uchar *a_search);

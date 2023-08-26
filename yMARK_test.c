@@ -68,7 +68,26 @@ ymark__unit_end         (void)
 char ymark__unit_stub        (void) { return 0; }
 
 char
-ymark__unit_regex       (uchar a_not, uchar *a_search)
+ymark__unit_regex       (char a_scope)
+{
+   DEBUG_YMARK  yLOG_enter   (__FUNCTION__);
+   yMARK_check ("0a1"      ,   0,   0,   0,   0,       's', "."          , "", 0.0, "");
+   yMARK_check ("0a5"      ,   0,   0,   4,   0,       's', "."          , "", 0.0, "");
+   yMARK_check ("0a6"      ,   0,   0,   5,   0,       's', "."          , "", 0.0, "");
+   yMARK_check ("0b3"      ,   0,   1,   2,   0,       's', "    2nd"    , "", 0.0, "");
+   yMARK_check ("0b4"      ,   0,   1,   3,   0,       's', "."          , "", 0.0, "");
+   yMARK_check ("0b5"      ,   0,   1,   4,   0,       's', "."          , "", 0.0, "");
+   yMARK_check ("0k11"     ,   0,  10,  10,   0,       's', "1st 2nd"    , "", 0.0, "");
+   yMARK_check ("0p12"     ,   0,  15,  11,   0,       's', "1st"        , "", 0.0, "");
+   yMARK_check ("3d6"      ,   3,   3,   5,   0,       's', "1st"        , "", 0.0, "");
+   yMARK_check ("2b5"      ,   2,   1,   4,   0,       's', "    2nd 3rd", "", 0.0, "");
+   yMARK_check ("Za1"      ,  35,   0,   0,   0,       's', "    2nd"    , "", 0.0, "");
+   DEBUG_YMARK  yLOG_exit    (__FUNCTION__);
+   return 0;
+}
+
+char
+ymark__unit_regex_OLD   (uchar a_not, uchar *a_search)
 {
    DEBUG_YMARK  yLOG_enter   (__FUNCTION__);
    DEBUG_YMARK  yLOG_point   ("a_search"  , a_search);
@@ -78,20 +97,68 @@ ymark__unit_regex       (uchar a_not, uchar *a_search)
    }
    if      (strcmp ("/1st", a_search) == 0) {
       DEBUG_YMARK   yLOG_note    ("found /1st");
-      yMARK_found ("0k11"     ,   0,  10,  10,   0);
-      yMARK_found ("0p12"     ,   0,  15,  11,   0);
-      yMARK_found ("3d6"      ,   3,   3,   5,   0);
+      if (a_not == 'y') {
+         yMARK_found ("0a1"      ,   0,   0,   0,   0);
+         yMARK_found ("0a5"      ,   0,   0,   4,   0);
+         yMARK_found ("0a6"      ,   0,   0,   5,   0);
+         yMARK_found ("0b3"      ,   0,   1,   2,   0);
+         yMARK_found ("0b4"      ,   0,   1,   3,   0);
+         yMARK_found ("0b5"      ,   0,   1,   4,   0);
+         yMARK_found ("2b5"      ,   2,   1,   4,   0);
+         yMARK_found ("Za1"      ,  35,   0,   0,   0);
+      } else {
+         yMARK_found ("0k11"     ,   0,  10,  10,   0);
+         yMARK_found ("0p12"     ,   0,  15,  11,   0);
+         yMARK_found ("3d6"      ,   3,   3,   5,   0);
+      }
    }
    else if (strcmp ("/2nd", a_search) == 0) {
       DEBUG_YMARK   yLOG_note    ("found /2nd");
-      yMARK_found ("0k11"     ,   0,  10,  10,   0);
-      yMARK_found ("0b3"      ,   0,   1,   2,   0);
-      yMARK_found ("2b5"      ,   2,   1,   4,   0);
-      yMARK_found ("Za1"      ,  35,   0,   0,   0);
+      if (a_not == 'y') {
+         yMARK_found ("0a1"      ,   0,   0,   0,   0);
+         yMARK_found ("0a5"      ,   0,   0,   4,   0);
+         yMARK_found ("0a6"      ,   0,   0,   5,   0);
+         yMARK_found ("0b4"      ,   0,   1,   3,   0);
+         yMARK_found ("0b5"      ,   0,   1,   4,   0);
+         yMARK_found ("0p12"     ,   0,  15,  11,   0);
+         yMARK_found ("3d6"      ,   3,   3,   5,   0);
+      } else {
+         yMARK_found ("0k11"     ,   0,  10,  10,   0);
+         yMARK_found ("0b3"      ,   0,   1,   2,   0);
+         yMARK_found ("2b5"      ,   2,   1,   4,   0);
+         yMARK_found ("Za1"      ,  35,   0,   0,   0);
+      }
    }
    else if (strcmp ("/another", a_search) == 0) {
       DEBUG_YMARK   yLOG_note    ("found /another");
+      if (a_not == 'y') {
+         yMARK_found ("0a1"      ,   0,   0,   0,   0);
+         yMARK_found ("0a5"      ,   0,   0,   4,   0);
+         yMARK_found ("0a6"      ,   0,   0,   5,   0);
+         yMARK_found ("0b3"      ,   0,   1,   2,   0);
+         yMARK_found ("0b4"      ,   0,   1,   3,   0);
+         yMARK_found ("0b5"      ,   0,   1,   4,   0);
+         yMARK_found ("0k11"     ,   0,  10,  10,   0);
+         yMARK_found ("0p12"     ,   0,  15,  11,   0);
+         yMARK_found ("3d6"      ,   3,   3,   5,   0);
+         yMARK_found ("Za1"      ,  35,   0,   0,   0);
+      } else {
+         yMARK_found ("2b5"      ,   2,   1,   4,   0);
+      }
+   }
+   else if (strcmp ("/.*"     , a_search) == 0) {
+      DEBUG_YMARK   yLOG_note    ("found /another");
+      yMARK_found ("0a1"      ,   0,   0,   0,   0);
+      yMARK_found ("0a5"      ,   0,   0,   4,   0);
+      yMARK_found ("0a6"      ,   0,   0,   5,   0);
+      yMARK_found ("0b3"      ,   0,   1,   2,   0);
+      yMARK_found ("0b4"      ,   0,   1,   3,   0);
+      yMARK_found ("0b5"      ,   0,   1,   4,   0);
+      yMARK_found ("0k11"     ,   0,  10,  10,   0);
+      yMARK_found ("0p12"     ,   0,  15,  11,   0);
       yMARK_found ("2b5"      ,   2,   1,   4,   0);
+      yMARK_found ("3d6"      ,   3,   3,   5,   0);
+      yMARK_found ("Za1"      ,  35,   0,   0,   0);
    } else {
       DEBUG_YMARK   yLOG_note    ("nothing found");
    }
