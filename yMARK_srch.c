@@ -943,8 +943,9 @@ yMARK_execute         (uchar *a_search)
       DEBUG_YMARK   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
+   if (a_search != NULL)  strlcpy (x_search, a_search, LEN_RECD);
    /*---(prepare)-----------------------*/
-   rc = ymark_srch__prepare (a_search, &x_type, &x_join, &x_not, &x_hist, &x_comp, &x_exp);
+   rc = ymark_srch__prepare (x_search, &x_type, &x_join, &x_not, &x_hist, &x_comp, &x_exp);
    DEBUG_YMARK   yLOG_value   ("prepare"   , rc);
    --rce;  if (rc < 0) {
       DEBUG_YMARK   yLOG_exitr   (__FUNCTION__, rce);
@@ -956,7 +957,7 @@ yMARK_execute         (uchar *a_search)
       return 0;
    }
    /*---(handle)------------------------*/
-   rc = ymark_srch__run     (a_search, 'u', x_type, x_join);
+   rc = ymark_srch__run     (x_search, 'u', x_type, x_join);
    DEBUG_YMARK   yLOG_value   ("run"       , rc);
    --rce;  if (rc < 0) {
       DEBUG_YMARK   yLOG_exitr   (__FUNCTION__, rce);
