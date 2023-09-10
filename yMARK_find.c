@@ -20,7 +20,7 @@ ymark_to_sort           (char a_label [LEN_LABEL], char r_sort [LEN_TITLE])
    if (r_sort != NULL)  strcpy (r_sort, "");
    --rce;  if (a_label == NULL)  return rce;
    --rce;  if (r_sort  == NULL)  return rce;
-   rc = str2gyges (a_label, &u, &x, &y, NULL, NULL, 0, YSTR_ADAPT);
+   rc = ystr2gyges (a_label, &u, &x, &y, NULL, NULL, 0, YSTR_ADAPT);
    if (rc < 0)   ystrlcpy (x_sort, a_label, LEN_TITLE);
    else          sprintf (x_sort, "%2d·%3d·%4d %s", u, x, y, a_label);
    ystrlcpy (r_sort, x_sort, LEN_TITLE);
