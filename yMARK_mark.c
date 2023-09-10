@@ -1062,7 +1062,7 @@ ymark_mark_smode        (uchar a_major, uchar a_minor)
    /*---(header)-------------------------*/
    DEBUG_YMARK   yLOG_enter   (__FUNCTION__);
    DEBUG_YMARK   yLOG_char    ("a_major"   , a_major);
-   DEBUG_YMARK   yLOG_char    ("a_minor"   , chrvisible (a_minor));
+   DEBUG_YMARK   yLOG_char    ("a_minor"   , ychrvisible (a_minor));
    /*> myVIKEYS.info_win = '-';                                                       <*/
    /*---(defenses)-----------------------*/
    DEBUG_YMARK   yLOG_char    ("mode"      , yMODE_curr ());
