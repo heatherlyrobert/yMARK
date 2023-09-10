@@ -132,11 +132,11 @@ ymark_srch_init         (void)
       return rce;
    }
    /*---(search abbr list)---------------*/
-   strlcpy (S_SRCH_LIST, YSTR_NUMBER, S_SRCH_MAX);
-   strlcpy (S_SRCH_LIST, YSTR_LOWER , S_SRCH_MAX);
-   strlcpy (S_SRCH_LIST, YSTR_UPPER , S_SRCH_MAX);
-   strlcat (S_SRCH_LIST, YSTR_GREEK , S_SRCH_MAX);
-   strlcat (S_SRCH_LIST, "."        , S_SRCH_MAX);  /* temp spot */
+   ystrlcpy (S_SRCH_LIST, YSTR_NUMBER, S_SRCH_MAX);
+   ystrlcpy (S_SRCH_LIST, YSTR_LOWER , S_SRCH_MAX);
+   ystrlcpy (S_SRCH_LIST, YSTR_UPPER , S_SRCH_MAX);
+   ystrlcat (S_SRCH_LIST, YSTR_GREEK , S_SRCH_MAX);
+   ystrlcat (S_SRCH_LIST, "."        , S_SRCH_MAX);  /* temp spot */
    DEBUG_YMARK   yLOG_info    ("LIST"      , S_SRCH_LIST);
    s_nlist  = strlen (S_SRCH_LIST);
    DEBUG_YMARK   yLOG_value   ("s_nlist"   , s_nlist);
@@ -249,7 +249,7 @@ static void  o___MEMORY__________o () { return; }
  *>    --rce;  if (*r_new != NULL) {                                                  <* 
  *>       DEBUG_YMARK   yLOG_note    ("already found, increasing counter");           <* 
  *>       str2mongo (time (NULL), (*r_new)->runtime);                                 <* 
- *>       strlpadn  (++s_seq, (*r_new)->seq, '.', '>', 6);                            <* 
+ *>       ystrlpadn  (++s_seq, (*r_new)->seq, '.', '>', 6);                            <* 
  *>       rc = ySORT_prepare (B_SRCH);                                                <* 
  *>       if (rc < 0) {                                                               <* 
  *>          DEBUG_YMARK   yLOG_exitr   (__FUNCTION__, rce);                          <* 
@@ -275,7 +275,7 @@ static void  o___MEMORY__________o () { return; }
  *>    x_new->runs = x_new->found = 0;                                                <* 
  *>    /+---(add timestamp)------------------+/                                       <* 
  *>    str2mongo (time (NULL), x_new->runtime);                                       <* 
- *>    strlpadn  (++s_seq, x_new->seq, '.', '>', 6);                                  <* 
+ *>    ystrlpadn  (++s_seq, x_new->seq, '.', '>', 6);                                  <* 
  *>    /+---(into btree)---------------------+/                                       <* 
  *>    rc = ySORT_hook (B_SRCH, x_new, x_new->seq, &x_new->btree);                    <* 
  *>    DEBUG_YMARK   yLOG_value   ("btree"     , rc);                                 <* 
@@ -397,13 +397,13 @@ ymark_srch_list         (void)
    tSRCH      *x_curr      = NULL;
    char        x_entry     [LEN_LABEL];
    /*---(walk the list)------------------*/
-   strlcpy (g_print, ",", LEN_RECD);
+   ystrlcpy (g_print, ",", LEN_RECD);
    ymark_srch_by_cursor (YDLST_HEAD, &x_curr);
    while (x_curr != NULL) {
       if (i > 10)          break;
       if (x_curr->text != NULL)    sprintf  (x_entry, "%s,", x_curr->text);
-      else                         strlcpy  (x_entry, "??", LEN_LABEL);
-      strlcat    (g_print, x_entry, LEN_RECD);
+      else                         ystrlcpy  (x_entry, "??", LEN_LABEL);
+      ystrlcat    (g_print, x_entry, LEN_RECD);
       ymark_srch_by_cursor (YDLST_NEXT, &x_curr);
    }
    /*---(catch empty)--------------------*/
@@ -458,11 +458,11 @@ ymark_srch_marks        (void)
    /*---(locals)-----------+-----------+-*/
    int         i           =    0;
    char        x_entry     [LEN_LABEL];
-   strlcpy (g_print, ",", LEN_RECD);
+   ystrlcpy (g_print, ",", LEN_RECD);
    for (i = 0; i < s_nlist - 1; ++i) {
       if (S_SRCHS [i] != NULL) {
          sprintf  (x_entry, "%c,", S_SRCH_LIST [i]);
-         strlcat    (g_print, x_entry, LEN_RECD);
+         ystrlcat    (g_print, x_entry, LEN_RECD);
       }
    }
    /*---(catch empty)--------------------*/
@@ -525,7 +525,7 @@ ymark_srch__prepare     (char b_search [LEN_RECD], char *r_type, char *r_join, c
    DEBUG_YMARK   yLOG_info    ("b_search"  , b_search);
    if (b_search [0] != '/') {
       DEBUG_YMARK   yLOG_note    ("must start with a forward slash");
-      strlcpy (b_search, "", LEN_RECD);
+      ystrlcpy (b_search, "", LEN_RECD);
       DEBUG_YMARK   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
@@ -536,12 +536,12 @@ ymark_srch__prepare     (char b_search [LEN_RECD], char *r_type, char *r_join, c
    --rce;  if (x_len == 1) {
       DEBUG_YMARK   yLOG_note    ("requested a specific purge of finds");
       ymark_find_purge ();
-      strlcpy (b_search, "", LEN_RECD);
+      ystrlcpy (b_search, "", LEN_RECD);
       DEBUG_YMARK   yLOG_exit    (__FUNCTION__);
       return 0;
    }
    /*---(look for history)--------------*/
-   strlcpy (x_srch, b_search, LEN_RECD);
+   ystrlcpy (x_srch, b_search, LEN_RECD);
    --rce;  if (strncmp (x_srch, "//", 2) == 0) {
       DEBUG_YCMD   yLOG_note    ("this is a history request");
       rc = yVIHUB_yVIEW_direct  (x_srch);
@@ -557,16 +557,16 @@ ymark_srch__prepare     (char b_search [LEN_RECD], char *r_type, char *r_join, c
    DEBUG_YCMD   yLOG_value   ("history"   , rc);
    /*---(check for forced history)------*/
    if (x_srch [1] == '/') {
-      strlcpy (x_srch, x_srch + 1, LEN_RECD);
+      ystrlcpy (x_srch, x_srch + 1, LEN_RECD);
       x_hist = 'y';
    } else {
-      strlcpy (x_srch, x_srch    , LEN_RECD);
+      ystrlcpy (x_srch, x_srch    , LEN_RECD);
    }
    /*---(check for late-joins)-----------*/
    --rce;  for (i = 0; i < strlen (YSTR_JOIN); ++i) {
       if (strchr (x_srch + 2, YSTR_JOIN [i]) != NULL) {
          DEBUG_YMARK   yLOG_note    ("can not join (абвгде) in normal search");
-         strlcpy (x_srch, "", LEN_RECD);
+         ystrlcpy (x_srch, "", LEN_RECD);
          DEBUG_YMARK   yLOG_exitr   (__FUNCTION__, rce);
          return rce;
       }
@@ -606,7 +606,7 @@ ymark_srch__prepare     (char b_search [LEN_RECD], char *r_type, char *r_join, c
    /*---(check num types)----------------*/
    if (strchr ("=<>мно", x_srch [1]) != NULL) {
       x_comp = x_srch [1];
-      rc = strl2num (x_srch + 2, &x_exp, LEN_RECD);
+      rc = ystrl2num (x_srch + 2, &x_exp, LEN_RECD);
       if (rc >= 0)  x_type = 'i';
       if (strchr (x_srch + 2, '.') != NULL)  x_type = 'f';
       if (strchr (x_srch + 2, 'Ы') != NULL)  x_type = 'f';
@@ -621,7 +621,7 @@ ymark_srch__prepare     (char b_search [LEN_RECD], char *r_type, char *r_join, c
    s_comp = x_comp;
    s_exp  = x_exp;
    /*---(save-back)----------------------*/
-   strlcpy (b_search, x_srch, LEN_RECD);
+   ystrlcpy (b_search, x_srch, LEN_RECD);
    if (r_type != NULL)  *r_type = x_type;
    if (r_join != NULL)  *r_join = x_join;
    if (r_not  != NULL)  *r_not  = x_not;
@@ -943,7 +943,7 @@ yMARK_execute         (uchar *a_search)
       DEBUG_YMARK   yLOG_exitr   (__FUNCTION__, rce);
       return rce;
    }
-   if (a_search != NULL)  strlcpy (x_search, a_search, LEN_RECD);
+   if (a_search != NULL)  ystrlcpy (x_search, a_search, LEN_RECD);
    /*---(prepare)-----------------------*/
    rc = ymark_srch__prepare (x_search, &x_type, &x_join, &x_not, &x_hist, &x_comp, &x_exp);
    DEBUG_YMARK   yLOG_value   ("prepare"   , rc);
@@ -1097,7 +1097,7 @@ static void  o___DATA____________o () { return; }
  *>       return rce;                                                                 <* 
  *>    }                                                                              <* 
  *>    /+---(write)--------------------------+/                                       <* 
- *>    rc = strlexport (0, S_SRCHS [n]->text);                                        <* 
+ *>    rc = ystrlexport (0, S_SRCHS [n]->text);                                        <* 
  *>    /+---(complete)-----------------------+/                                       <* 
  *>    DEBUG_YMARK   yLOG_exit    (__FUNCTION__);                                     <* 
  *>    return rc;                                                                     <* 
@@ -1123,7 +1123,7 @@ static void  o___DATA____________o () { return; }
  *>       return rce;                                                                 <* 
  *>    }                                                                              <* 
  *>    /+---(read)---------------------------+/                                       <* 
- *>    rc = strlimport  (0, x_recd, NULL);                                            <* 
+ *>    rc = ystrlimport  (0, x_recd, NULL);                                            <* 
  *>    DEBUG_YMARK   yLOG_value   ("read"      , rc);                                 <* 
  *>    --rce;  if (rc < 0) {                                                          <* 
  *>       DEBUG_YMARK   yLOG_exitr   (__FUNCTION__, rce);                             <* 
@@ -1202,9 +1202,9 @@ static void  o___DATA____________o () { return; }
  *>    }                                                                              <* 
  *>    DEBUG_YMARK   yLOG_info    ("a_text"    , a_text);                             <* 
  *>    /+---(check quoting)------------------+/                                       <* 
- *>    strlcpy     (x_text, a_text, LEN_RECD);                                        <* 
- *>    strltrim    (x_text, ySTR_BOTH, LEN_RECD);                                     <* 
- *>    strldequote (x_text, LEN_RECD);                                                <* 
+ *>    ystrlcpy     (x_text, a_text, LEN_RECD);                                        <* 
+ *>    ystrltrim    (x_text, ySTR_BOTH, LEN_RECD);                                     <* 
+ *>    ystrldequote (x_text, LEN_RECD);                                                <* 
  *>    /+---(save search to history)---------+/                                       <* 
  *>    rc = ymark_srch_new (x_text, '-', &x_new);                                     <* 
  *>    DEBUG_YMARK   yLOG_point   ("x_new"     , x_new);                              <* 
@@ -1290,7 +1290,7 @@ ymark_srch_central      (uchar a_abbr, uchar *a_key)
     *>    /+---(found)-----------------------+/                                                 <* 
     *>    x_found = 'y';                                                                        <* 
     *>    p = strtok_r (NULL, q, &r);                                                           <* 
-    *>    strltrim (p, ySTR_BOTH, LEN_RECD);                                                    <* 
+    *>    ystrltrim (p, ySTR_BOTH, LEN_RECD);                                                    <* 
     *>    break;                                                                                <* 
     *>    /+---(done)------------------------+/                                                 <* 
     *> }                                                                                        <* 

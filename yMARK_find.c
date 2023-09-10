@@ -21,9 +21,9 @@ ymark_to_sort           (char a_label [LEN_LABEL], char r_sort [LEN_TITLE])
    --rce;  if (a_label == NULL)  return rce;
    --rce;  if (r_sort  == NULL)  return rce;
    rc = str2gyges (a_label, &u, &x, &y, NULL, NULL, 0, YSTR_ADAPT);
-   if (rc < 0)   strlcpy (x_sort, a_label, LEN_TITLE);
+   if (rc < 0)   ystrlcpy (x_sort, a_label, LEN_TITLE);
    else          sprintf (x_sort, "%2d·%3d·%4d %s", u, x, y, a_label);
-   strlcpy (r_sort, x_sort, LEN_TITLE);
+   ystrlcpy (r_sort, x_sort, LEN_TITLE);
    return 0;
 }
 
@@ -88,7 +88,7 @@ ymark_find_new          (uchar *a_label, char a_force, tFIND **r_new)
       return rce;
    }
    /*---(populate)-----------------------*/
-   strlcpy (x_new->label, a_label, LEN_LABEL);
+   ystrlcpy (x_new->label, a_label, LEN_LABEL);
    x_new->u = x_new->x = x_new->y = x_new->z = 0;
    x_new->c = 1;
    ymark_to_sort (x_new->label, x_new->sort);
@@ -277,13 +277,13 @@ ymark_find_list         (void)
    /*---(save current point)-------------*/
    ySORT_push (B_FIND);
    /*---(walk the list)------------------*/
-   strlcpy (g_print, ",", LEN_RECD);
+   ystrlcpy (g_print, ",", LEN_RECD);
    ymark_find_by_cursor (YDLST_HEAD, &x_curr);
    while (x_curr != NULL) {
       if (i > 10)          break;
       if (x_curr->label != NULL)   sprintf  (x_entry, "%s,", x_curr->label);
-      else                         strlcpy  (x_entry, "??", LEN_LABEL);
-      strlcat    (g_print, x_entry, LEN_RECD);
+      else                         ystrlcpy  (x_entry, "??", LEN_LABEL);
+      ystrlcat    (g_print, x_entry, LEN_RECD);
       ymark_find_by_cursor (YDLST_NEXT, &x_curr);
    }
    /*---(catch empty)--------------------*/
@@ -308,11 +308,11 @@ yMARK_find_status       (char a_size, short a_wide, char *a_list)
    --rce;  if (a_list  == NULL)  return rce;
    /*---(get current)--------------------*/
    ymark_find_by_cursor (YDLST_CURR, &x_curr);
-   if (x_curr != NULL)  strlcpy (x_label, x_curr->label, LEN_LABEL);
+   if (x_curr != NULL)  ystrlcpy (x_label, x_curr->label, LEN_LABEL);
    /*---(status)-------------------------*/
    c = ymark_find_count ();
    if (c > 0) x_on = 'y';
-   strlcpy (x_list, ymark_find_list (), LEN_RECD);
+   ystrlcpy (x_list, ymark_find_list (), LEN_RECD);
    snprintf (a_list, 200, "finds    %c  %-8.8s  %4d  %s", x_on, x_label, c, x_list);
    /*---(complete)-----------------------*/
    return 0;

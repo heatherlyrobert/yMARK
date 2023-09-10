@@ -56,12 +56,12 @@ ymark_mark_init         (void)
       return rce;
    }
    /*---(macro abbrev list)--------------*/
-   strlcpy (S_MARK_LIST, "'"           , S_MARK_MAX);
-   strlcat (S_MARK_LIST, YSTR_LOWER    , S_MARK_MAX);
-   strlcat (S_MARK_LIST, YSTR_UPPER    , S_MARK_MAX);
-   strlcat (S_MARK_LIST, YSTR_NUMBER   , S_MARK_MAX);
-   strlcat (S_MARK_LIST, YSTR_GREEK    , S_MARK_MAX);
-   strlcat (S_MARK_LIST, "<>¤"         , S_MARK_MAX);
+   ystrlcpy (S_MARK_LIST, "'"           , S_MARK_MAX);
+   ystrlcat (S_MARK_LIST, YSTR_LOWER    , S_MARK_MAX);
+   ystrlcat (S_MARK_LIST, YSTR_UPPER    , S_MARK_MAX);
+   ystrlcat (S_MARK_LIST, YSTR_NUMBER   , S_MARK_MAX);
+   ystrlcat (S_MARK_LIST, YSTR_GREEK    , S_MARK_MAX);
+   ystrlcat (S_MARK_LIST, "<>¤"         , S_MARK_MAX);
    DEBUG_YMARK   yLOG_info    ("LIST"      , S_MARK_LIST);
    s_nmark = strlen (S_MARK_LIST);
    /*---(clear)--------------------------*/
@@ -134,7 +134,7 @@ ymark_mark__index       (uchar a_abbr)
    DEBUG_YMARK   yLOG_senter  (__FUNCTION__);
    /*---(check)--------------------------*/
    DEBUG_YMARK   yLOG_snote   ("check");
-   n  = strlchr (S_MARK_LIST, a_abbr, S_MARK_MAX);
+   n  = ystrlchr (S_MARK_LIST, a_abbr, S_MARK_MAX);
    DEBUG_YMARK   yLOG_sint    (n);
    --rce;  if (n  < 0) {
       DEBUG_YMARK   yLOG_sexitr  (__FUNCTION__, n);
@@ -187,7 +187,7 @@ ymark_mark__history     (uchar a_mark)
    }
    DEBUG_YMARK   yLOG_value   ("n"         , n);
    /*---(fill in data)-------------------*/
-   strlcpy (s_mark_info [0].label, s_mark_info [n].label, LEN_LABEL);
+   ystrlcpy (s_mark_info [0].label, s_mark_info [n].label, LEN_LABEL);
    DEBUG_YMARK   yLOG_info    ("'"         , s_mark_info [0].label);
    s_mark_info [0].u  = s_mark_info [n].u;
    s_mark_info [0].x  = s_mark_info [n].x;
@@ -230,7 +230,7 @@ ymark_mark__set               (uchar a_mark)
    }
    /*---(mark label)---------------------*/
    DEBUG_YMARK   yLOG_note    ("save current position");
-   strlcpy (s_mark_info [n].label, x_label, LEN_LABEL);
+   ystrlcpy (s_mark_info [n].label, x_label, LEN_LABEL);
    s_mark_info [n].u  = b;
    s_mark_info [n].x  = x;
    s_mark_info [n].y  = y;
@@ -265,7 +265,7 @@ ymark_mark__unset       (uchar a_mark)
    }
    /*---(clear mark)---------------------*/
    DEBUG_YMARK   yLOG_note    ("clear values");
-   strlcpy (s_mark_info [x_index].label, "-", LEN_LABEL);
+   ystrlcpy (s_mark_info [x_index].label, "-", LEN_LABEL);
    s_mark_info [x_index].source  = MARK_NONE;
    s_mark_info [x_index].u   = 0;
    s_mark_info [x_index].x   = 0;
@@ -311,7 +311,7 @@ ymark_mark__return      (uchar a_mark)
       return rce;
    }
    /*---(check for existance)------------*/
-   strlcpy (x_label, s_mark_info [x_index].label, LEN_LABEL);
+   ystrlcpy (x_label, s_mark_info [x_index].label, LEN_LABEL);
    DEBUG_YMARK   yLOG_info    ("x_label"   , x_label);
    DEBUG_YMARK   yLOG_char    ("source"    , s_mark_info [x_index].source);
    --rce;  if (s_mark_info [x_index].source == MARK_NONE) {
@@ -353,7 +353,7 @@ ymark_mark__copy              (char a_src, char a_dst)
    }
    /*---(mark label)---------------------*/
    DEBUG_YMARK   yLOG_note    ("copy position");
-   strlcpy (s_mark_info [x_dst].label, s_mark_info [x_src].label, LEN_LABEL);
+   ystrlcpy (s_mark_info [x_dst].label, s_mark_info [x_src].label, LEN_LABEL);
    s_mark_info [x_dst].u  = s_mark_info [x_src].u;
    s_mark_info [x_dst].x  = s_mark_info [x_src].x;
    s_mark_info [x_dst].y  = s_mark_info [x_src].y;
@@ -550,7 +550,7 @@ yMARK_mark__data        (uchar a_mark)
    /*---(status)-------------------------*/
    n = ymark_mark__index (a_mark);
    if        (n < 0) {
-      strlcpy (g_print, " ·  ·  ··········   ·u    ·x     ·y     ·z ´", LEN_RECD);
+      ystrlcpy (g_print, " ·  ·  ··········   ·u    ·x     ·y     ·z ´", LEN_RECD);
    } else if (s_mark_info [n].source == MARK_NONE) {
       sprintf (g_print, " %c  ·  ··········   ·u    ·x     ·y     ·z ´", a_mark);
    } else {
@@ -567,19 +567,19 @@ ymark_mark_infowin      (char *a_entry, int a_index)
    int         n           =    0;
    char        t           [LEN_RECD]  = "";
    /*---(status)-------------------------*/
-   strlcpy (a_entry, " -  -              -     -     -      -  -              -     -     -         ", LEN_RECD);
+   ystrlcpy (a_entry, " -  -              -     -     -      -  -              -     -     -         ", LEN_RECD);
    if (a_index <   0)  return 0;
    if (a_index >= 26)  return 0;
    a = 'a' + a_index;
    n = ymark_mark__index (a);
    if (s_mark_info [n].source == MARK_NONE)  sprintf (t, " %c  -              -     -     -     ", a);
    else                                      sprintf (t, " %c  %-10.10s %5d,%5d,%5d     "        , a, s_mark_info [n].label, s_mark_info [n].u, s_mark_info [n].x, s_mark_info [n].y, s_mark_info [n].z);
-   strlcpy (a_entry, t, LEN_RECD);
+   ystrlcpy (a_entry, t, LEN_RECD);
    a = 'A' + a_index;
    n = ymark_mark__index (a);
    if (s_mark_info [n].source == MARK_NONE)  sprintf (t, " %c  -              -     -     -     ", a);
    else                                      sprintf (t, " %c  %-10.10s %5d,%5d,%5d     "        , a, s_mark_info [n].label, s_mark_info [n].x, s_mark_info [n].y, s_mark_info [n].z);
-   strlcat (a_entry, t, LEN_RECD);
+   ystrlcat (a_entry, t, LEN_RECD);
    /*---(complete)-----------------------*/
    return 0;
 }
@@ -595,7 +595,7 @@ yMARK_mark_status       (char a_size, short a_wide, char *a_list)
    --rce;  if (a_list  == NULL)  return rce;
    /*---(status)-------------------------*/
    ymark_mark_listplus   (x_list);
-   c = strldcnt (x_list, ':', LEN_RECD);
+   c = ystrldcnt (x_list, ':', LEN_RECD);
    snprintf (a_list, 200, "marking  %c  %c  %c  %c  %c  %2d  %s", s_marking, s_mark_head, s_mark_tail, s_mark_curr, s_mark_prev, c, x_list);
    /*---(complete)-----------------------*/
    return 0;
@@ -769,7 +769,7 @@ yMARK_mark_reader       (int n, char *a_verb)
    DEBUG_YMARK   yLOG_info    ("x_label"   , x_label);
    /*---(save)---------------------------*/
    DEBUG_YMARK   yLOG_note    ("saving values");
-   strlcpy (s_mark_info [c].label, x_label, LEN_LABEL);
+   ystrlcpy (s_mark_info [c].label, x_label, LEN_LABEL);
    rc = yVIHUB_yMAP_locator (s_mark_info [c].label, &s_mark_info [c].u, &s_mark_info [c].x, &s_mark_info [c].y, &s_mark_info [c].z);
    --rce;  if (rc < 0) {
       ymark_mark__unset   (x_abbr);
@@ -1022,7 +1022,7 @@ ymark_mark_direct       (char *a_string)
       }
       DEBUG_YMARK   yLOG_char    ("a_mark"    , x_src);
       /*---(save)---------------------------*/
-      strlcpy (s_mark_info [x_index].label, a_string + 2, LEN_LABEL);
+      ystrlcpy (s_mark_info [x_index].label, a_string + 2, LEN_LABEL);
       rc = yVIHUB_yMAP_locator   (s_mark_info [x_index].label, &s_mark_info [x_index].u, &s_mark_info [x_index].x, &s_mark_info [x_index].y, &s_mark_info [x_index].z);
       --rce;  if (rc < 0) {
          ymark_mark__unset   (x_src);
